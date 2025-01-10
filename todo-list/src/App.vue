@@ -6,20 +6,11 @@ import TodoStats from './components/TodoStats.vue'
 import TodoSort from './components/TodoSort.vue'
 
 const todos = ref([])
-const todo = ref(null)
 const order = ref('input')
 
-function addNewTodo() {
-  if (!todo.value) return
-
-  const newTodo = {
-    id: Date.now(),
-    todo: todo.value,
-    done: false,
-  }
-
+function addNewTodo(newTodo) {
+  console.log(newTodo);
   todos.value.push(newTodo)
-  todo.value = null
 }
 
 function checkTodo(id) {
@@ -54,7 +45,7 @@ const sortedTodos = computed(() => {
 <template>
   <main>
     <h1>Organize, Focus, Conquer</h1>
-    <FormInput v-model:todo="todo" :onAdd="addNewTodo" :onDelete="deleteChecked" />
+    <FormInput :onAdd="addNewTodo" :onDelete="deleteChecked" />
     <TodoList :todos="sortedTodos" :checkTodo="checkTodo" />
     <TodoStats :todos="todos" />
     <TodoSort v-model:order="order" :onClear="clearList" />
