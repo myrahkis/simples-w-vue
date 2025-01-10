@@ -1,18 +1,19 @@
 <script setup>
 import { computed, ref } from 'vue'
+import TodoList from './components/TodoList.vue'
+import FormInput from './components/FormInput.vue'
+import TodoStats from './components/TodoStats.vue'
+import TodoSort from './components/TodoSort.vue'
 
 const todos = ref([])
 const todo = ref(null)
 const order = ref('input')
 
-const finished = computed(() => todos.value.filter((todo) => todo.done).length)
-const listLength = computed(() => todos.value.length)
-const percentage = computed(() => Math.floor((finished.value / listLength.value) * 100))
-
 function addNewTodo() {
   if (!todo.value) return
 
   const newTodo = {
+    id: Date.now(),
     todo: todo.value,
     done: false,
   }
@@ -21,8 +22,8 @@ function addNewTodo() {
   todo.value = null
 }
 
-function checkTodo(index) {
-  todos.value = todos.value.map((todo, id) => (id === index ? { ...todo, done: !todo.done } : todo))
+function checkTodo(id) {
+  todos.value = todos.value.map((todo) => (todo.id === id ? { ...todo, done: !todo.done } : todo))
 }
 
 function deleteChecked() {
@@ -30,7 +31,11 @@ function deleteChecked() {
 }
 
 function clearList() {
-  todos.value = []
+  if (todos.value.length === 0) return
+
+  const confirm = window.confirm('This will delete every todo from the list! Proceed?')
+
+  if (confirm) todos.value = []
 }
 
 const sortingFunctions = {
@@ -48,37 +53,12 @@ const sortedTodos = computed(() => {
 
 <template>
   <main>
-    <h1>HIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII!!</h1>
-    <input type="text" v-model="todo" @keyup.enter="addNewTodo" placeholder="Enter a todo" />
-    <button @click="addNewTodo">Add</button>
-    <ul v-for="(todo, index) in sortedTodos" :key="index">
-      <li class="row">
-        <input type="checkbox" :checked="todo.done" @click="checkTodo(index)" />
-        <p>{{ todo.todo }}</p>
-      </li>
-    </ul>
-    <button @click="deleteChecked">Delete finished</button>
-    <button @click="clearList">Clear list</button>
+    <h1>Organize, Focus, Conquer</h1>
+    <FormInput v-model:todo="todo" :onAdd="addNewTodo" :onDelete="deleteChecked" />
+    <TodoList :todos="sortedTodos" :checkTodo="checkTodo" />
+    <TodoStats :todos="todos" />
+    <TodoSort v-model:order="order" :onClear="clearList" />
   </main>
-  <div v-if="listLength > 0">
-    <p v-if="finished === 0">Start completing your todos to see progress.</p>
-    <p v-else-if="finished === listLength">You've completed it all!</p>
-    <p v-else>You've completed {{ finished }} out of {{ listLength }}. That's {{ percentage }}%!</p>
-  </div>
-  <div>
-    <hr />
-    <p>Sort by:</p>
-    <select name="sort" v-model="order">
-      <option value="input">Input order</option>
-      <option value="completion">Completion</option>
-      <option value="alph">First letter (A-Z)</option>
-      <option value="rev-alph">First letter reversed (Z-A)</option>
-    </select>
-  </div>
 </template>
 
-<style scoped>
-.row {
-  display: flex;
-}
-</style>
+<style scoped></style>
