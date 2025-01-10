@@ -67,5 +67,6 @@ const { todos, checkTodo } = defineProps(['todos', 'checkTodo'])
   }
 }
 .todo-item {
+  width: 100%;
 }
 </style>

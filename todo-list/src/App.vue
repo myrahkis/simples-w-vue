@@ -4,25 +4,11 @@ import TodoList from './components/TodoList.vue'
 import FormInput from './components/FormInput.vue'
 import TodoStats from './components/TodoStats.vue'
 import TodoSort from './components/TodoSort.vue'
+import useLocalStorage from './hooks/useLocalStorage'
 
-const todos = ref([])
 const order = ref('input')
 
-onMounted(() => {
-  let stored = localStorage.getItem('todos')
-
-  if (stored !== null) {
-    todos.value = JSON.parse(stored)
-  }
-})
-
-watch(
-  todos,
-  (newTodos) => {
-    localStorage.setItem('todos', JSON.stringify(newTodos))
-  },
-  { deep: true },
-)
+const { list: todos } = useLocalStorage('todos')
 
 function addNewTodo(newTodo) {
   console.log(newTodo)
@@ -61,7 +47,7 @@ const sortedTodos = computed(() => {
 <template>
   <div class="container">
     <header class="header">
-      <h1 class="header-text">The best todo treaker</h1>
+      <h1 class="header-text">Organize, Focus, Conquer</h1>
       <FormInput :onAdd="addNewTodo" :onDelete="deleteChecked" />
     </header>
     <main class="list">
