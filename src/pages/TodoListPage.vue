@@ -45,7 +45,7 @@ const sortedTodos = computed(() => {
 </script>
 
 <template>
-  <div class="container">
+  <div class="todo-grid">
     <header class="header">
       <h1 class="header-text">Organize, Focus, Conquer</h1>
       <FormInput :onAdd="addNewTodo" :onDelete="deleteChecked" />
@@ -61,7 +61,7 @@ const sortedTodos = computed(() => {
 </template>
 
 <style scoped>
-.container {
+.todo-grid {
   display: grid;
   grid-template-rows: 0.3fr 1fr 0.3fr;
   grid-template-columns: repeat(5, 1fr);

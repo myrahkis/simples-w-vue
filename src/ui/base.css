@@ -1,0 +1,39 @@
+:root {
+  --text-color: #d7d9e8;
+  --danger-color: #970e38;
+  --neon-green-color: #0cbe62;
+  --neon-pink-color: #e52fe4;
+  --dark-bg-color: #07081d;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 65%;
+}
+
+body {
+  min-height: 100vh;
+  width: 100%;
+  background-color: var(--dark-bg-color);
+  color: var(--text-color);
+}
+
+input {
+  background-color: var(--text-color);
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 2rem;
+  font-size: 1.8rem;
+  color: white;
+}

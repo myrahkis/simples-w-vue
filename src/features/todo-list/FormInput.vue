@@ -47,13 +47,17 @@ function submitHandle() {
   transition: all 0.3s;
 
   &:focus {
-    outline: 3px solid #e52fe4;
+    outline: 3px solid var(--neon-pink-color);
     outline-offset: 5px;
   }
 }
 
 .add-btn {
-  background-image: linear-gradient(to right bottom, #e52fe4, #0cbe62);
+  background-image: linear-gradient(
+    to right bottom,
+    var(--neon-pink-color),
+    var(--neon-green-color)
+  );
 }
 .dlt-checked {
   position: relative;

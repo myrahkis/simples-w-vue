@@ -1,8 +1,9 @@
 <script setup>
 import { ref } from 'vue'
 import TodoListPage from './pages/TodoListPage.vue'
+import CalculatorPage from './pages/CalculatorPage.vue';
 
-const page = ref('todo-list')
+const page = ref('calculator')
 </script>
 
 <template>
@@ -11,7 +12,7 @@ const page = ref('todo-list')
     <a @click="() => (page = 'calculator')">Calculator</a>
   </nav>
   <TodoListPage v-if="page === 'todo-list'" />
-  <h1 v-if="page === 'calculator'">CALCULATOR</h1>
+  <CalculatorPage v-if="page === 'calculator'" />
 </template>
 
 <style scoped></style>
