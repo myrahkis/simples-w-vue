@@ -1,10 +1,10 @@
 <script setup>
-import { computed, onMounted, ref, watch } from 'vue'
-import TodoList from './components/TodoList.vue'
-import FormInput from './components/FormInput.vue'
-import TodoStats from './components/TodoStats.vue'
-import TodoSort from './components/TodoSort.vue'
-import useLocalStorage from './hooks/useLocalStorage'
+import { computed, ref } from 'vue'
+import useLocalStorage from '@/hooks/useLocalStorage'
+import FormInput from '@/features/todo-list/FormInput.vue'
+import TodoList from '@/features/todo-list/TodoList.vue'
+import TodoSort from '@/features/todo-list/TodoSort.vue'
+import TodoStats from '@/features/todo-list/TodoStats.vue'
 
 const order = ref('input')
 
