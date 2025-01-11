@@ -1,4 +1,5 @@
 <script setup>
+import CalcButtons from '@/features/calculator/CalcButtons.vue'
 import { evaluate } from 'mathjs'
 import { nextTick, ref, watch } from 'vue'
 
@@ -60,25 +61,12 @@ function doneCalculating() {
     <div class="calculator-grid">
       <input class="display" type="text" v-model="expression" disabled />
       <p class="result-cell">{{ result }}</p>
-      <button class="cell" @click="eraseChar">&lArr;</button>
-      <button class="cell" @click="clearDisplay">C</button>
-      <button @click="addToDisplay('%')" class="cell mod">MOD</button>
-      <button @click="addToDisplay('/')" class="cell">/</button>
-      <button @click="addToDisplay('7')" class="cell">7</button>
-      <button @click="addToDisplay('8')" class="cell">8</button>
-      <button @click="addToDisplay('9')" class="cell">9</button>
-      <button @click="addToDisplay('*')" class="cell">*</button>
-      <button @click="addToDisplay('4')" class="cell">4</button>
-      <button @click="addToDisplay('5')" class="cell">5</button>
-      <button @click="addToDisplay('6')" class="cell">6</button>
-      <button @click="addToDisplay('-')" class="cell">-</button>
-      <button @click="addToDisplay('1')" class="cell">1</button>
-      <button @click="addToDisplay('2')" class="cell">2</button>
-      <button @click="addToDisplay('3')" class="cell">3</button>
-      <button @click="addToDisplay('+')" class="cell">+</button>
-      <button @click="addToDisplay('0')" class="cell zero">0</button>
-      <button @click="addToDisplay('.')" class="cell">.</button>
-      <button class="cell equals" @click="doneCalculating">=</button>
+      <CalcButtons
+        :onAdd="addToDisplay"
+        :onErase="eraseChar"
+        :onClear="clearDisplay"
+        :onEquals="doneCalculating"
+      />
     </div>
   </div>
 </template>
@@ -113,32 +101,5 @@ function doneCalculating() {
   font-size: 3rem;
   text-align: right;
   height: 5rem;
-}
-.cell {
-  border-radius: 0;
-  background-color: transparent;
-  border: 1px solid var(--neon-green-color);
-  transition: all 0.2s;
-
-  &:last-child {
-    outline: 2px solid var(--dark-bg-color);
-    outline-offset: -3px;
-  }
-
-  &:hover {
-    transform: translateY(-3px);
-    background-color: var(--neon-green-color);
-    color: var(--dark-bg-color);
-  }
-  &:active {
-    transform: translateY(0);
-  }
-}
-.zero {
-  grid-column: 1 / 3;
-}
-.equals {
-  background-color: var(--neon-green-color);
-  color: var(--dark-bg-color);
 }
 </style>
