@@ -80,6 +80,8 @@ function submitHandle() {
     <aside class="results-list">
       <ResultsList :searchResult="searchResult" :onResultClick="fetchPage" />
     </aside>
+    <h1 v-if="isLoading" class="loader">Loading...</h1>
+    <h1 v-if="error" class="error">Error: {{ error }}</h1>
     <main v-show="selectedPage !== ''">
       <div id="page-content" class="wiki-page"></div>
     </main>
@@ -93,7 +95,6 @@ function submitHandle() {
   grid-template-columns: 0.4fr 1fr;
   grid-template-rows: 1fr auto;
   padding-bottom: 3rem;
-  /* overflow-y: auto; */
 }
 
 .header {
@@ -107,9 +108,6 @@ function submitHandle() {
     text-align: center;
     padding-bottom: 1.2rem;
     font-size: 3.5rem;
-  }
-
-  .header--green {
   }
 }
 
@@ -128,5 +126,17 @@ function submitHandle() {
   padding: 2rem;
   font-size: 1.5rem;
   border: 1px solid var(--neon-green-color);
+}
+
+.loader {
+  padding: 2rem;
+  font-size: 3rem;
+  color: var(--neon-pink-color);
+}
+
+.error {
+  padding: 2rem;
+  font-size: 2.5rem;
+  color: var(--neon-pink-color);
 }
 </style>
