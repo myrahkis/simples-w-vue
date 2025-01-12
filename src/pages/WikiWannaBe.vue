@@ -6,14 +6,17 @@ const searchResult = ref([])
 const isLoading = ref(false)
 const error = ref(null)
 
-const url =
-  'https://ru.wikipedia.org/w/api.php?action=query&list=search&prop=info&inprop=url&format=json&origin=*&srlimit=50'
+const selectedPage = ref('')
 
-async function fetchFromWiki(query) {
+const url = 'https://ru.wikipedia.org/w/api.php?format=json&origin=*'
+const searchParams = '&list=search&prop=info&inprop=url&action=query&srlimit=50&srsearch='
+const pageParams = '&action=parse&page='
+
+async function fetchSearchQuery(query) {
   try {
     isLoading.value = true
 
-    const res = await fetch(`${url}&srsearch=${query}`)
+    const res = await fetch(`${url}${searchParams}${query}`)
 
     if (!res.ok) throw new Error("Couldn't fetch search data.")
 
@@ -31,10 +34,38 @@ async function fetchFromWiki(query) {
   }
 }
 
+async function fetchPage(title) {
+  try {
+    isLoading.value = true
+
+    const res = await fetch(`${url}${pageParams}${title}`)
+
+    if (!res.ok) throw new Error("Couldn't get page code.")
+
+    const data = await res.json()
+
+    if (!data.parse) throw new Error(`Page '${title}' couldn't be found.`)
+
+    // console.log(data.parse)
+    selectedPage.value = data.parse.text['*']
+
+    const container = document.getElementById('page-content')
+
+    if (container) container.innerHTML = selectedPage.value
+
+    error.value = ''
+  } catch (err) {
+    console.error(err.message)
+    error.value = err.message
+  } finally {
+    isLoading.value = false
+  }
+}
+
 function submitHandle() {
   if (searchQuery.value === '') return
 
-  fetchFromWiki(searchQuery.value)
+  fetchSearchQuery(searchQuery.value)
 }
 </script>
 
@@ -47,7 +78,9 @@ function submitHandle() {
 
   <ul>
     <li v-for="result in searchResult" :key="result.pageid">
-      {{ result.title }}
+      <a type="button" target="_blank" @click="fetchPage(result.title)">{{ result.title }}</a>
     </li>
   </ul>
+
+  <div id="page-content"></div>
 </template>
