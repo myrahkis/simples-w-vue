@@ -47,7 +47,7 @@ const sortedTodos = computed(() => {
 <template>
   <div class="todo-grid">
     <header class="header">
-      <h1 class="header-text">Organize, Focus, Conquer</h1>
+      <h1 class="header--green">Organize, Focus, Conquer</h1>
       <FormInput :onAdd="addNewTodo" :onDelete="deleteChecked" />
     </header>
     <main class="list">
@@ -76,17 +76,6 @@ const sortedTodos = computed(() => {
   grid-column: 1 / -1;
   font-size: 2rem;
   gap: 1.5rem;
-
-  .header-text {
-    background-color: #0cbe62;
-    color: white;
-    width: 100%;
-    padding: 1rem;
-    padding-bottom: 2rem;
-    text-align: center;
-    border-bottom-right-radius: 50%;
-    border-bottom-left-radius: 50%;
-  }
 }
 .list {
   overflow-y: auto;

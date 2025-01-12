@@ -24,7 +24,7 @@ function submitHandle() {
 
 <template>
   <form @submit.prevent="submitHandle" class="wrapper">
-    <input type="text" v-model="todo" placeholder="Enter a todo" class="todo-input" />
+    <input type="text" v-model="todo" placeholder="Enter a todo" class="input" />
     <button type="submit" class="add-btn">Add</button>
     <button @click="onDelete" class="dlt-checked">Delete finished</button>
   </form>
@@ -35,21 +35,6 @@ function submitHandle() {
   display: flex;
   gap: 1.5rem;
   padding: 1.5rem;
-}
-.todo-input {
-  font-size: 1.8rem;
-  padding: 1rem 1.5rem;
-  border: none;
-  border-radius: 2rem;
-  width: 35rem;
-  max-width: 35rem;
-  outline: none;
-  transition: all 0.3s;
-
-  &:focus {
-    outline: 3px solid var(--neon-pink-color);
-    outline-offset: 5px;
-  }
 }
 
 .add-btn {

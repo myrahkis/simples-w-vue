@@ -37,3 +37,103 @@ button {
   font-size: 1.8rem;
   color: white;
 }
+
+.header--green {
+  background-color: #0cbe62;
+  color: white;
+  width: 100%;
+  padding: 1rem;
+  padding-bottom: 2rem;
+  text-align: center;
+  border-bottom-right-radius: 50%;
+  border-bottom-left-radius: 50%;
+}
+
+.input {
+  font-size: 1.8rem;
+  padding: 1rem 1.5rem;
+  border: none;
+  border-radius: 2rem;
+  width: 35rem;
+  max-width: 35rem;
+  outline: none;
+  transition: all 0.3s;
+
+  &:focus {
+    outline: 3px solid var(--neon-pink-color);
+    outline-offset: 5px;
+  }
+}
+
+a:link,
+a:visited {
+  color: var(--text-color);
+  text-decoration: none;
+  pointer-events: none;
+}
+
+.mw-parser-output {
+  display: block;
+  /* flex-direction: column; */
+
+  tbody {
+    background-color: transparent;
+    float: right !important;
+    /* border: 1px solid var(--text-color); */
+
+    .infobox-header {
+      a {
+        color: var(--dark-bg-color);
+      }
+    }
+  }
+
+  p {
+    margin: 1rem 0;
+  }
+
+  .infobox {
+    /* align-self: flex-end; */
+    float: right !important;
+    width: min-content;
+    border: 1px solid var(--text-color);
+    margin-left: 1.5rem;
+  }
+
+  .mw-editsection {
+    display: none;
+  }
+
+  .mbox-text,
+  .navbox-group,
+  .side-box-flex,
+  .selfreference,
+  .navbox,
+  .sidebar {
+    color: var(--dark-bg-color);
+
+    a {
+      color: var(--dark-bg-color);
+    }
+  }
+
+  /* .side-box-flex,
+  .side-box-abovebelow,
+  .navbox {
+    a {
+      color: var(--dark-bg-color);
+    }
+  } */
+
+  .reflist {
+    padding: 0 1rem;
+  }
+
+  code,
+  .cs1-visible-error {
+    display: none;
+  }
+  /* span {
+    display: none;
+  } */
+}
