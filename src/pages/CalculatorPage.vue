@@ -82,7 +82,7 @@ function doneCalculating() {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   grid-template-rows: 1fr auto repeat(5, 1fr);
-  max-width: 45%;
+  max-width: 90%;
   justify-content: center;
   border: 2px solid var(--neon-green-color);
 }
@@ -92,6 +92,7 @@ function doneCalculating() {
   margin: 1.5rem;
   padding: 1rem;
   font-size: 2.3rem;
+  text-align: right;
 }
 .result-cell {
   grid-column: 1 / -1;
