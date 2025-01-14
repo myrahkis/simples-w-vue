@@ -34,6 +34,8 @@ async function fetchSearchQuery(query) {
   } finally {
     isLoading.value = false
   }
+
+  console.log(searchResult)
 }
 
 async function fetchPage(title) {
@@ -78,7 +80,7 @@ function submitHandle() {
   <div class="wiki-grid">
     <header class="header header--green">
       <h1 class="heading">The Simplest Wiki</h1>
-      <SearchInput v-model:searchQuery="searchQuery" :onSubmit="submitHandle" />
+      <SearchInput v-model:searchQuery.trim="searchQuery" :onSubmit="submitHandle" />
     </header>
     <aside v-if="searchResult.length > 0" class="results-list">
       <ResultsList :searchResult="searchResult" :onResultClick="fetchPage" />

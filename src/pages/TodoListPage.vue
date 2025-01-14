@@ -11,7 +11,7 @@ const order = ref('input')
 const { list: todos } = useLocalStorage('todos')
 
 function addNewTodo(newTodo) {
-  console.log(newTodo)
+  // console.log(newTodo)
   todos.value.push(newTodo)
 }
 
