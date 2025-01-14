@@ -3,7 +3,7 @@ const { todos, checkTodo } = defineProps(['todos', 'checkTodo'])
 </script>
 
 <template>
-  <ul class="list">
+  <TransitionGroup class="list" name="list" tag="ul">
     <li v-for="todo in todos" :key="todo.id" class="row">
       <input
         type="checkbox"
@@ -14,7 +14,7 @@ const { todos, checkTodo } = defineProps(['todos', 'checkTodo'])
       />
       <label class="todo-item" :for="todo.id">{{ todo.todo }}</label>
     </li>
-  </ul>
+  </TransitionGroup>
 </template>
 
 <style scoped>
@@ -73,5 +73,15 @@ const { todos, checkTodo } = defineProps(['todos', 'checkTodo'])
 }
 .todo-item {
   width: 100%;
+}
+.list-move,
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.5s ease;
+}
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+  transform: translateX(30px);
 }
 </style>
