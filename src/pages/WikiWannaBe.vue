@@ -1,6 +1,7 @@
 <script setup>
 import ResultsList from '@/features/wiki/ResultsList.vue'
 import SearchInput from '@/features/wiki/SearchInput.vue'
+import { getParsedPage, getSearchResults } from '@/services/wikiApi'
 import { ref } from 'vue'
 
 const searchQuery = ref('')
@@ -10,48 +11,28 @@ const error = ref(null)
 
 const selectedPage = ref('')
 
-const url = 'https://en.wikipedia.org/w/api.php?format=json&origin=*'
-const searchParams = '&list=search&prop=info&inprop=url&action=query&srlimit=80&srsearch='
-const pageParams = '&action=parse&page='
+async function submitHandle() {
+  if (searchQuery.value === '') return
 
-async function fetchSearchQuery(query) {
   try {
     isLoading.value = true
 
-    const res = await fetch(`${url}${searchParams}${query}`)
+    searchResult.value = await getSearchResults(searchQuery.value)
 
-    if (!res.ok) throw new Error("Couldn't fetch search data.")
-
-    const data = await res.json()
-
-    if (data.query.search.length === 0) throw new Error(`${query} couldn't be found.`)
-
-    searchResult.value = data.query.search
     error.value = ''
   } catch (err) {
-    console.error(err.message)
     error.value = err.message
+    console.log(err.message)
   } finally {
     isLoading.value = false
   }
-
-  console.log(searchResult)
 }
 
-async function fetchPage(title) {
+async function appendPage(title) {
   try {
     isLoading.value = true
 
-    const res = await fetch(`${url}${pageParams}${title}`)
-
-    if (!res.ok) throw new Error("Couldn't get page code.")
-
-    const data = await res.json()
-
-    if (!data.parse) throw new Error(`Page '${title}' couldn't be found.`)
-
-    // console.log(data.parse)
-    selectedPage.value = data.parse.text['*']
+    selectedPage.value = await getParsedPage(title)
 
     const container = document.getElementById('page-content')
 
@@ -59,17 +40,11 @@ async function fetchPage(title) {
 
     error.value = ''
   } catch (err) {
-    console.error(err.message)
     error.value = err.message
+    console.error(err.message)
   } finally {
     isLoading.value = false
   }
-}
-
-function submitHandle() {
-  if (searchQuery.value === '') return
-
-  fetchSearchQuery(searchQuery.value)
 }
 </script>
 
@@ -83,7 +58,7 @@ function submitHandle() {
       <SearchInput v-model:searchQuery.trim="searchQuery" :onSubmit="submitHandle" />
     </header>
     <aside v-if="searchResult.length > 0" class="results-list">
-      <ResultsList :searchResult="searchResult" :onResultClick="fetchPage" />
+      <ResultsList :searchResult="searchResult" :onResultClick="appendPage" />
     </aside>
     <main v-show="selectedPage !== ''">
       <div id="page-content" class="wiki-page"></div>
