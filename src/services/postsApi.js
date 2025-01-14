@@ -1,12 +1,27 @@
 import axios from 'axios'
 
-const url = 'https://jsonplaceholder.typicode.com/posts?_limit='
+const url = 'https://jsonplaceholder.typicode.com/posts'
 const postsPerPage = 10
 
 export async function getPosts(page) {
-  const data = await axios.get(`${url}${postsPerPage * page.value}`)
+  const res = await axios.get(`${url}?_limit=${postsPerPage * page.value}`)
 
-  if (data.request.status !== 200) throw new Error('AAAAAAAAA!')
+  if (res.request.status !== 200) throw new Error("Couldn't fetch posts.")
 
-  return data.data
+  return res.data
+}
+
+export async function addPost(post) {
+  const res = await axios.post(url, {
+    method: 'POST',
+    body: JSON.stringify(post),
+    headers: {
+      'Content-type': 'application/json; charset=UTF-8',
+    },
+  })
+
+  // console.log(res);
+  if (res.status !== 201) throw new Error("Couldn't add new post.")
+
+  return res.data.body
 }

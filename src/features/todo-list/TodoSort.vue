@@ -9,7 +9,7 @@ const { onClear } = defineProps({
   <div class="wrapper">
     <p>Sort by:</p>
     <form @submit.prevent>
-      <select name="sort" @input="$emit('update:order', $event.target.value)" class="sort-select">
+      <select name="sort" @change="$emit('update:order', $event.target.value)" class="sort-select">
         <option value="input">Input order</option>
         <option value="completion">Completion</option>
         <option value="alph">First letter (A-Z)</option>
