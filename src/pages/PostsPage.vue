@@ -1,14 +1,22 @@
 <script setup>
 import LoaderSpinner from '@/ui/LoaderSpinner.vue'
 import { getPosts } from '@/services/postsApi'
-import { ref, watchEffect } from 'vue'
+import { computed, ref, watchEffect } from 'vue'
 import AddPostForm from '@/features/posts/AddPostForm.vue'
+import PostsList from '@/features/posts/PostsList.vue'
+import SortList from '@/ui/SortList.vue'
 
 const posts = ref([])
 const page = ref(1)
 const isLoading = ref(false)
 const error = ref('')
 const showModal = ref(false)
+const order = ref('default')
+const options = [
+  { value: 'defaul', name: 'Default order' },
+  { value: 'title', name: 'Title' },
+  { value: 'body', name: 'Body' },
+]
 
 watchEffect(async () => {
   isLoading.value = true
@@ -28,20 +36,37 @@ function addNewPost(newPost) {
   posts.value.push(newPost)
   showModal.value = false
 }
+
+const sortingFunctions = {
+  title: (a, b) => a.title.localeCompare(b.title),
+  body: (a, b) => a.body.localeCompare(b.body),
+}
+
+const sortedList = computed(() => {
+  const listCopy = [...posts.value]
+  const sortFunc = sortingFunctions[order.value]
+  return sortFunc ? listCopy.sort(sortFunc) : listCopy
+})
 </script>
 
 <template>
-  <h1>Posts</h1>
-  <button @click="page += 1">Load more</button>
-  <AddPostForm :addNewPost="addNewPost" :showModal="showModal" @closeModal="showModal = false" />
-  <button @click="showModal = true">Add new post</button>
   <LoaderSpinner v-if="isLoading" />
-  <ul>
-    <li v-for="post in posts" :key="post.id" style="padding: 1rem">
-      <h3>{{ post.title }}</h3>
-      <p>{{ post.body }}</p>
-    </li>
-  </ul>
+  <AddPostForm :addNewPost="addNewPost" :showModal="showModal" @closeModal="showModal = false" />
+  <header class="header">
+    <h1 class="header--green">Posts page</h1>
+    <button @click="page += 1">Load more</button>
+    <button @click="showModal = true">Add new post</button>
+  </header>
+  <main>
+    <PostsList :posts="sortedList" />
+  </main>
+  <footer>
+    <SortList v-model:order="order" :options="options" />
+  </footer>
 </template>
 
-<style scoped></style>
+<style scoped>
+.header {
+  font-size: 2rem;
+}
+</style>

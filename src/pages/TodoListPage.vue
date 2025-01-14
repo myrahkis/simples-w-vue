@@ -3,15 +3,19 @@ import { computed, ref } from 'vue'
 import useLocalStorage from '@/hooks/useLocalStorage'
 import FormInput from '@/features/todo-list/FormInput.vue'
 import TodoList from '@/features/todo-list/TodoList.vue'
-import TodoSort from '@/features/todo-list/TodoSort.vue'
 import TodoStats from '@/features/todo-list/TodoStats.vue'
+import SortList from '@/ui/SortList.vue'
 
 const order = ref('input')
-
 const { list: todos } = useLocalStorage('todos')
+const options = [
+  { value: 'input', name: 'Input order' },
+  { value: 'completion', name: 'Completion' },
+  { value: 'alph', name: 'First letter (A-Z)' },
+  { value: 'rev-alph', name: 'First letter reversed (Z-A)' },
+]
 
 function addNewTodo(newTodo) {
-  // console.log(newTodo)
   todos.value.push(newTodo)
 }
 
@@ -54,7 +58,10 @@ const sortedTodos = computed(() => {
       <TodoList :todos="sortedTodos" :checkTodo="checkTodo" />
     </main>
     <footer class="footer">
-      <TodoSort v-model:order="order" :onClear="clearList" />
+      <div class="wrapper">
+        <SortList v-model:order="order" :options="options" />
+        <button @click="clearList" class="clear-btn">Clear list</button>
+      </div>
       <TodoStats :todos="todos" />
     </footer>
   </div>
@@ -88,6 +95,24 @@ const sortedTodos = computed(() => {
   scrollbar-width: thin;
   scrollbar-gutter: both-edges;
   scrollbar-color: #0c0d30 #07081d;
+}
+.wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  gap: 1rem;
+  font-size: 2rem;
+}
+.clear-btn {
+  background-color: transparent;
+  border: 3px solid transparent;
+  color: var(--text-color);
+  transition: all 0.2s;
+
+  &:hover {
+    border: 3px solid var(--danger-color);
+  }
 }
 .footer {
   /* background-color: yellowgreen; */
