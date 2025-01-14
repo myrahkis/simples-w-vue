@@ -54,13 +54,15 @@ const sortedList = computed(() => {
   <AddPostForm :addNewPost="addNewPost" :showModal="showModal" @closeModal="showModal = false" />
   <header class="header">
     <h1 class="header--green">Posts page</h1>
-    <button @click="page += 1">Load more</button>
-    <button @click="showModal = true">Add new post</button>
+    <div class="btns-wrapper">
+      <button @click="page += 1" class="header-btn">Load more</button>
+      <button @click="showModal = true" class="header-btn">Add new post</button>
+    </div>
   </header>
   <main>
     <PostsList :posts="sortedList" />
   </main>
-  <footer>
+  <footer class="footer">
     <SortList v-model:order="order" :options="options" />
   </footer>
 </template>
@@ -68,5 +70,36 @@ const sortedList = computed(() => {
 <style scoped>
 .header {
   font-size: 2rem;
+}
+.footer {
+  position: fixed;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  font-size: 2rem;
+  padding: 2rem;
+}
+.btns-wrapper {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    padding: 1rem 0;
+}
+.header-btn {
+  border: 2px solid var(--neon-pink-color);
+  background-color: transparent;
+  transition: all 0.2s;
+
+  &:hover {
+    background-color: var(--neon-pink-color);
+    color: var(--dark-bg-color);
+    transform: translateY(-2px);
+  }
+  &:active {
+    transform: translateY(0);
+  }
 }
 </style>
