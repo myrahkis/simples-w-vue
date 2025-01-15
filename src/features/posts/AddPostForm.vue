@@ -18,7 +18,7 @@ function submitHandle() {
   const newPost = {
     title: postTitle.value,
     body: postBody.value,
-    userId: Date.now(),
+    id: Date.now(),
   }
 
   try {

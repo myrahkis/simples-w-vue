@@ -1,5 +1,5 @@
 <script setup>
-const { options } = defineProps({ options: Array })
+const { order, options } = defineProps({ order: String, options: Array })
 </script>
 
 <template>

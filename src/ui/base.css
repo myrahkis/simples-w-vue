@@ -76,6 +76,11 @@ a:visited {
   pointer-events: none;
 }
 
+.highlight {
+  background-color: var(--neon-green-color);
+  /* color: var(--dark-bg-color); */
+}
+
 .mw-content-ltr,
 .mw-parser-output {
   display: block;

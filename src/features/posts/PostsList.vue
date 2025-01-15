@@ -1,25 +1,25 @@
 <script setup>
 import ListItem from './ListItem.vue'
 
-const { posts } = defineProps({ posts: Array })
+const { posts, searchQuery } = defineProps({
+  posts: Array,
+  searchQuery: String,
+})
 </script>
 
 <template>
   <TransitionGroup name="list" tag="ul" class="list">
-    <ListItem v-for="post in posts" :post :key="post.title" />
+    <ListItem v-for="post in posts" :post="post" :searchQuery="searchQuery" :key="post.title" />
   </TransitionGroup>
 </template>
 
 <style scoped>
 .list {
-  height: 65vh;
-  overflow-y: auto;
-  padding: 2rem 2.5rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  column-gap: 1.5rem;
+  padding: 2rem 4rem;
   list-style: none;
-
-  scrollbar-width: thin;
-  scroll-behavior: smooth;
-  scrollbar-color: var(--neon-green-color) transparent;
 }
 
 .list-move,
