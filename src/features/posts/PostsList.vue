@@ -1,5 +1,5 @@
 <script setup>
-import ListItem from './ListItem.vue'
+import ListItem from './ListItem.vue';
 
 const { posts, searchQuery } = defineProps({
   posts: Array,

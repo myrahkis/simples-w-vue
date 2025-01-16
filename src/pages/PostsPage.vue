@@ -1,7 +1,7 @@
 <script setup>
 import LoaderSpinner from '@/ui/LoaderSpinner.vue'
 import { getPosts } from '@/services/postsApi'
-import { computed, onMounted, ref, watchEffect } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import AddPostForm from '@/features/posts/AddPostForm.vue'
 import PostsList from '@/features/posts/PostsList.vue'
 import SortList from '@/ui/SortList.vue'
@@ -22,8 +22,6 @@ const options = [
 ]
 const MAX_PAGES = Math.ceil(100 / 12)
 
-// onMounted(fetchPosts)
-
 onMounted(function () {
   const options = {
     root: document.querySelector('.main'),
@@ -31,10 +29,8 @@ onMounted(function () {
     threshold: 1.0,
   }
   const callback = function (entries, observer) {
-    if (entries[0].isIntersecting) {
-      if (page.value <= MAX_PAGES) {
-        fetchPosts()
-      }
+    if (entries[0].isIntersecting && page.value <= MAX_PAGES) {
+      fetchPosts()
     }
   }
   const observer = new IntersectionObserver(callback, options)
@@ -43,8 +39,6 @@ onMounted(function () {
 
 async function fetchPosts() {
   isLoading.value = true
-
-  console.log(page.value)
 
   try {
     const newPosts = await getPosts(page)
@@ -89,7 +83,7 @@ const filteredAndSortedList = computed(() => {
     <h1 class="header--green">Posts page</h1>
     <div class="btns-wrapper">
       <PostSearch v-model:searchQuery.trim="searchQuery" />
-      <button @click="page += 1" class="header-btn">Load more</button>
+      <!-- <button @click="page += 1" class="header-btn">Load more</button> -->
       <button @click="showModal = true" class="header-btn">Add new post</button>
     </div>
   </header>

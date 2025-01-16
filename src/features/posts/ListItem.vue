@@ -26,7 +26,7 @@ const highlightSearch = (text) => {
   background-color: var(--dark-bg-color);
   box-shadow: 0 0.5rem 1.5rem black;
   border-radius: 2rem;
-  height: fit-content;
+  /* height: fit-content; */
   /* background-color: #090b27; */
 }
 .title {

@@ -73,7 +73,6 @@ a:link,
 a:visited {
   color: var(--text-color);
   text-decoration: none;
-  pointer-events: none;
 }
 
 .highlight {
@@ -85,6 +84,10 @@ a:visited {
 .mw-parser-output {
   display: block;
   /* flex-direction: column; */
+
+  a {
+    pointer-events: none;
+  }
 
   tbody {
     background-color: transparent;

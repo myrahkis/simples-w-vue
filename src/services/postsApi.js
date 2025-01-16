@@ -6,8 +6,6 @@ const postsPerPage = 12
 export async function getPosts(page) {
   const res = await axios.get(`${url}?_limit=${postsPerPage}&_page=${page.value}`)
 
-  console.log(res.data);
-
   if (res.request.status !== 200) throw new Error("Couldn't fetch posts.")
 
   return res.data
