@@ -25,3 +25,11 @@ export async function addPost(post) {
 
   return res.data.body
 }
+
+export async function getPostById(id) {
+  const res = await axios.get(`${url}/${id}`)
+
+  if (res.request.status !== 200) throw new Error(`Couldn't fetch posts #${id}.`)
+
+  return res.data
+}

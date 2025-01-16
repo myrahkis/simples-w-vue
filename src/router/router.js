@@ -1,3 +1,4 @@
+import PostPage from '@/features/posts/PostPage.vue'
 import CalculatorPage from '@/pages/CalculatorPage.vue'
 import PostsPage from '@/pages/PostsPage.vue'
 import TodoListPage from '@/pages/TodoListPage.vue'
@@ -24,6 +25,10 @@ const routes = [
   {
     path: '/posts',
     component: PostsPage,
+  },
+  {
+    path: '/posts/:id',
+    component: PostPage,
   },
 ]
 

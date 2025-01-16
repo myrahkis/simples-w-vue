@@ -57,7 +57,10 @@ function doneCalculating() {
 </script>
 
 <template>
-  <div class="container">
+  <header class="header">
+    <h1 class="header--green">Simple calculator</h1>
+  </header>
+  <main class="container">
     <div class="calculator-grid">
       <input class="display" type="text" v-model="expression" disabled />
       <p class="result-cell">{{ result }}</p>
@@ -68,15 +71,18 @@ function doneCalculating() {
         :onEquals="doneCalculating"
       />
     </div>
-  </div>
+  </main>
 </template>
 
 <style scoped>
+.header {
+  font-size: 2rem;
+}
 .container {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  height: 89vh;
 }
 .calculator-grid {
   display: grid;

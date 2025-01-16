@@ -47,7 +47,7 @@ const isOpen = ref(false)
 
 <style scoped>
 .navigation {
-  overflow: hidden;
+  overflow: hidden !important;
 }
 .checkbox {
   display: none;
@@ -93,6 +93,7 @@ const isOpen = ref(false)
 }
 
 .checkbox:checked ~ .nav-bg {
+  overflow: hidden;
   transform: scale(50);
 }
 
