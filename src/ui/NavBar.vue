@@ -1,26 +1,132 @@
 <script setup>
-import { RouterLink } from 'vue-router';
+import { ref } from 'vue'
+import { RouterLink } from 'vue-router'
 
+const isOpen = ref(false)
 </script>
 
 <template>
-  <div class="nav">
-    <ul>
-      <RouterLink to="/todos">
-        <li>Todos</li>
-      </RouterLink>
-      <RouterLink to="/wiki">
-        <li>Wiki</li>
-      </RouterLink>
-      <RouterLink to="/posts">
-        <li>Posts</li>
-      </RouterLink>
-      <RouterLink to="/calculator">
-        <li>Calculator</li>
-      </RouterLink>
-    </ul>
+  <div class="navigation">
+    <input
+      type="checkbox"
+      class="checkbox"
+      id="navi-toggle"
+      :checked="isOpen"
+      @click="isOpen = !isOpen"
+    />
+    <label for="navi-toggle" class="menu-btn">
+      <span>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="800px" height="800px">
+          <path
+            fill="currentColor"
+            fill-rule="evenodd"
+            d="M 19 4 a 1 1 0 0 1 -1 1 H 2 a 1 1 0 0 1 0 -2 h 16 a 1 1 0 0 1 1 1 Z m 0 6 a 1 1 0 0 1 -1 1 H 2 a 1 1 0 1 1 0 -2 h 16 a 1 1 0 0 1 1 1 Z m -1 7 a 1 1 0 1 0 0 -2 H 2 a 1 1 0 1 0 0 2 h 16 Z"
+          />
+        </svg>
+      </span>
+    </label>
+    <div class="nav-bg">&nbsp;</div>
+    <div class="nav-list" v-if="isOpen">
+      <ul class="links">
+        <RouterLink to="/todos">
+          <li class="link" @click="isOpen = false">Todos</li>
+        </RouterLink>
+        <RouterLink to="/wiki">
+          <li class="link" @click="isOpen = false">Wiki</li>
+        </RouterLink>
+        <RouterLink to="/posts">
+          <li class="link" @click="isOpen = false">Posts</li>
+        </RouterLink>
+        <RouterLink to="/calculator">
+          <li class="link" @click="isOpen = false">Calculator</li>
+        </RouterLink>
+      </ul>
+    </div>
   </div>
 </template>
 
 <style scoped>
+.navigation {
+  overflow: hidden;
+}
+.checkbox {
+  display: none;
+}
+.menu-btn {
+  position: fixed;
+  z-index: 1500;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  top: 1rem;
+  right: 45rem;
+  background-color: var(--neon-green-color);
+  padding: 0.3rem 0.7rem;
+  border-radius: 2rem;
+  transition: all 0.3s;
+
+  svg {
+    width: 4.5rem;
+    height: 4.5rem;
+    color: white;
+  }
+
+  &:hover {
+    background-color: var(--dark-bg-color);
+
+    svg {
+      color: var(--neon-green-color);
+    }
+  }
+}
+
+.nav-bg {
+  position: fixed;
+  top: 1rem;
+  right: 45rem;
+  height: 5rem;
+  width: 5rem;
+  border-radius: 50%;
+  z-index: 1000;
+  background-image: radial-gradient(var(--neon-green-color), var(--neon-pink-color));
+  transition: all 0.7s ease-in-out;
+}
+
+.checkbox:checked ~ .nav-bg {
+  transform: scale(50);
+}
+
+.nav-list {
+  position: fixed;
+  z-index: 1500;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: fit-content;
+}
+.links {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  list-style: upper-roman;
+  font-size: 3rem;
+}
+.link {
+  padding: 1rem;
+  color: var(--dark-bg-color);
+  background-image: linear-gradient(
+    120deg,
+    transparent 0%,
+    transparent 20%,
+    var(--neon-green-color) 20%
+  );
+  background-size: 600%;
+  transition: all 0.3s;
+
+  &:hover {
+    background-size: 100%;
+
+    transform: translateX(-1.5rem);
+  }
+}
 </style>
