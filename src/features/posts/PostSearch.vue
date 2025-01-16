@@ -4,7 +4,7 @@ const { searchQuery } = defineProps({ searchQuery: String })
 
 <template>
   <input
-    class="input"
+    class="input u-mr-sm"
     type="text"
     placeholder="Search by title"
     @input="$emit('update:searchQuery', $event.target.value)"
@@ -12,7 +12,7 @@ const { searchQuery } = defineProps({ searchQuery: String })
 </template>
 
 <style>
-.input {
+.u-mr-sm {
   margin-right: 0.5rem;
 }
 </style>

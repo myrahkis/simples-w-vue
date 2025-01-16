@@ -72,7 +72,6 @@ async function appendPage(title) {
   display: grid;
   grid-template-columns: 0.4fr 1fr;
   grid-template-rows: 1fr auto;
-  justify-self: center;
 }
 
 .header {

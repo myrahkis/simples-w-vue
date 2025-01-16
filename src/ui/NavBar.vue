@@ -26,7 +26,7 @@ const isOpen = ref(false)
       </span>
     </label>
     <div class="nav-bg">&nbsp;</div>
-    <div class="nav-list" v-if="isOpen">
+    <div class="nav-list">
       <ul class="links">
         <RouterLink to="/todos">
           <li class="link" @click="isOpen = false">Todos</li>
@@ -102,8 +102,13 @@ const isOpen = ref(false)
   z-index: 1500;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
-  width: fit-content;
+  opacity: 0;
+  visibility: hidden;
+  transform: translate(-50%, -50%) scale(0.8);
+  transition:
+    transform 0.7s,
+    opacity 0.7s,
+    visibility 0s linear 0.7s;
 }
 .links {
   display: flex;
@@ -112,6 +117,17 @@ const isOpen = ref(false)
   list-style: upper-roman;
   font-size: 3rem;
 }
+
+.checkbox:checked ~ .nav-list {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, -50%) scale(1);
+  transition:
+    transform 0.7s,
+    opacity 0.7s,
+    visibility 0s;
+}
+
 .link {
   padding: 1rem;
   color: var(--dark-bg-color);

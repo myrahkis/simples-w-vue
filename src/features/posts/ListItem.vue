@@ -13,7 +13,7 @@ const highlightSearch = (text) => {
 <template>
   <li :key="post.id" class="post">
     <div class="heading">
-      <h3 class="title" v-html="highlightSearch(post.title)"></h3>
+      <h3 class="title" v-html="highlightSearch(`${post.id}. ${post.title}`)"></h3>
       <button class="open-btn" @click="$router.push(`/posts/${post.id}`)">Open</button>
     </div>
     <p class="body">{{ post.body }}</p>
