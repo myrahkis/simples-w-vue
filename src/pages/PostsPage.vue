@@ -1,67 +1,29 @@
 <script setup>
+import { computed, ref } from 'vue'
+import { useStore } from 'vuex'
 import LoaderSpinner from '@/ui/LoaderSpinner.vue'
-import { getPosts } from '@/services/postsApi'
-import { computed, onMounted, ref } from 'vue'
 import AddPostForm from '@/features/posts/AddPostForm.vue'
 import PostsList from '@/features/posts/PostsList.vue'
 import SortList from '@/ui/SortList.vue'
 import PostSearch from '@/features/posts/PostSearch.vue'
-import { useStore } from 'vuex'
+import usePosts from '@/hooks/usePosts'
+import useIntersection from '@/hooks/useIntersection'
 
-const posts = ref([])
-const page = ref(1)
-const isLoading = ref(false)
-const error = ref('')
-// const showModal = ref(false)
+const MAX_PAGES = Math.ceil(100 / 12)
 const order = ref('default')
-const observerRef = ref(null)
-// const searchQuery = ref('')
 const options = [
   { value: 'defaul', name: 'Default order' },
   { value: 'title', name: 'Title' },
   { value: 'body', name: 'Body' },
 ]
+const { posts, page, isLoading, error, fetchPosts } = usePosts()
+const observerRef = useIntersection(fetchPosts, MAX_PAGES, page)
 
 const store = useStore()
 
-const MAX_PAGES = Math.ceil(100 / 12)
-
-onMounted(function () {
-  const options = {
-    root: document.querySelector('.main'),
-    rootMargin: '0px',
-    threshold: 1.0,
-  }
-  const callback = function (entries) {
-    if (entries[0].isIntersecting && page.value <= MAX_PAGES) {
-      fetchPosts()
-    }
-  }
-  const observer = new IntersectionObserver(callback, options)
-  observer.observe(observerRef.value)
-})
-
-async function fetchPosts() {
-  isLoading.value = true
-
-  try {
-    const newPosts = await getPosts(page)
-
-    posts.value = [...posts.value, ...newPosts]
-
-    error.value = ''
-  } catch (err) {
-    error.value = err.messageS
-  } finally {
-    isLoading.value = false
-  }
-
-  page.value += 1
-}
-
 function addNewPost(newPost) {
   posts.value.push(newPost)
-  store.posts.commit('posts/setShowModal', false)
+  store.commit('posts/setShowModal', false)
 }
 
 const sortingFunctions = {
