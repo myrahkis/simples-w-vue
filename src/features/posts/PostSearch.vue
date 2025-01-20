@@ -1,12 +1,19 @@
-<script setup></script>
+<script setup>
+import { computed } from 'vue'
+import { useStore } from 'vuex'
+
+const store = useStore()
+const searchQuery = computed(() => store.state.posts.searchQuery)
+const setSearchQuery = (value) => store.commit('posts/setSearchQuery', value)
+</script>
 
 <template>
   <input
     class="input u-mr-sm"
     type="text"
     placeholder="Search by title"
-    :value="$store.state.posts.searchQuery"
-    @input="$store.commit('posts/setSearchQuery', $event.target.value)"
+    :value="searchQuery"
+    @input="setSearchQuery($event.target.value)"
   />
 </template>
 

@@ -1,11 +1,12 @@
-<script setup></script>
+<script setup>
+import { useStore } from 'vuex'
+
+const store = useStore()
+const setShowModal = (value) => store.commit('posts/setShowModal', value)
+</script>
 
 <template>
-  <div
-    class="modal-bg"
-    v-if="$store.state.posts.showModal"
-    @click.stop="$store.commit('posts/setShowModal', false)"
-  >
+  <div class="modal-bg" v-if="$store.state.posts.showModal" @click.stop="setShowModal(false)">
     <slot></slot>
   </div>
 </template>
@@ -18,7 +19,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 100;
+  z-index: 10000;
   width: 100%;
   height: 100vh;
   background-color: rgba(0, 0, 0, 0.297);

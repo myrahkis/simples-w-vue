@@ -1,7 +1,8 @@
 <script setup>
-import BgBlurModal from '@/ui/BgBlurModal.vue'
-import { addPost } from '@/services/postsApi'
 import { ref } from 'vue'
+import { addPost } from '@/services/postsApi'
+import BgBlurModal from '@/ui/BgBlurModal.vue'
+import { useStore } from 'vuex'
 
 const { addNewPost } = defineProps({
   addNewPost: Function,
@@ -10,6 +11,9 @@ const { addNewPost } = defineProps({
 const postTitle = ref('')
 const postBody = ref('')
 const error = ref('')
+
+const store = useStore()
+const setShowModal = (value) => store.commit('posts/setShowModal', value)
 
 function submitHandle() {
   if (!postTitle.value || !postBody.value) return
@@ -37,9 +41,7 @@ function submitHandle() {
 <template>
   <BgBlurModal>
     <form method="POST" @submit.prevent="submitHandle" class="form" @click.stop>
-      <button @click="$store.commit('posts/setShowModal', false)" class="close-btn">
-        &#10006;
-      </button>
+      <button @click="setShowModal(false)" class="close-btn">&#10006;</button>
       <div class="colunm">
         <label for="title" class="label">Post title</label>
         <input class="input" id="title" type="text" v-model="postTitle" placeholder="title" />

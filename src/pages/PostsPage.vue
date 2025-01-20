@@ -20,10 +20,11 @@ const { posts, page, isLoading, error, fetchPosts } = usePosts()
 const observerRef = useIntersection(fetchPosts, MAX_PAGES, page)
 
 const store = useStore()
+const setShowModal = (value) => store.commit('posts/setShowModal', value)
 
 function addNewPost(newPost) {
   posts.value.push(newPost)
-  store.commit('posts/setShowModal', false)
+  setShowModal(false)
 }
 
 const sortingFunctions = {
@@ -51,9 +52,7 @@ const filteredAndSortedList = computed(() => {
     <h1 class="header--green">Posts page</h1>
     <div class="btns-wrapper">
       <PostSearch />
-      <button @click="$store.commit('posts/setShowModal', true)" class="header-btn">
-        Add new post
-      </button>
+      <button @click="setShowModal(true)" class="header-btn">Add new post</button>
     </div>
   </header>
   <main class="main">
