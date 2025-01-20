@@ -3,8 +3,7 @@ import BgBlurModal from '@/ui/BgBlurModal.vue'
 import { addPost } from '@/services/postsApi'
 import { ref } from 'vue'
 
-const { showModal, addNewPost } = defineProps({
-  showModal: Boolean,
+const { addNewPost } = defineProps({
   addNewPost: Function,
 })
 
@@ -36,9 +35,11 @@ function submitHandle() {
 </script>
 
 <template>
-  <BgBlurModal :showModal="showModal">
+  <BgBlurModal>
     <form method="POST" @submit.prevent="submitHandle" class="form" @click.stop>
-      <button @click="$emit('closeModal', false)" class="close-btn">&#10006;</button>
+      <button @click="$store.commit('posts/setShowModal', false)" class="close-btn">
+        &#10006;
+      </button>
       <div class="colunm">
         <label for="title" class="label">Post title</label>
         <input class="input" id="title" type="text" v-model="postTitle" placeholder="title" />

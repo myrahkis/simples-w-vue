@@ -1,15 +1,14 @@
 <script setup>
 import ListItem from './ListItem.vue';
 
-const { posts, searchQuery } = defineProps({
-  posts: Array,
-  searchQuery: String,
+const { posts } = defineProps({
+  posts: Array
 })
 </script>
 
 <template>
   <TransitionGroup name="list" tag="ul" class="list">
-    <ListItem v-for="post in posts" :post="post" :searchQuery="searchQuery" :key="post.title" />
+    <ListItem v-for="post in posts" :post="post" :key="post.title" />
   </TransitionGroup>
 </template>
 

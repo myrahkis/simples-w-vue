@@ -6,20 +6,24 @@ import AddPostForm from '@/features/posts/AddPostForm.vue'
 import PostsList from '@/features/posts/PostsList.vue'
 import SortList from '@/ui/SortList.vue'
 import PostSearch from '@/features/posts/PostSearch.vue'
+import { useStore } from 'vuex'
 
 const posts = ref([])
 const page = ref(1)
 const isLoading = ref(false)
 const error = ref('')
-const showModal = ref(false)
+// const showModal = ref(false)
 const order = ref('default')
 const observerRef = ref(null)
-const searchQuery = ref('')
+// const searchQuery = ref('')
 const options = [
   { value: 'defaul', name: 'Default order' },
   { value: 'title', name: 'Title' },
   { value: 'body', name: 'Body' },
 ]
+
+const store = useStore()
+
 const MAX_PAGES = Math.ceil(100 / 12)
 
 onMounted(function () {
@@ -28,7 +32,7 @@ onMounted(function () {
     rootMargin: '0px',
     threshold: 1.0,
   }
-  const callback = function (entries, observer) {
+  const callback = function (entries) {
     if (entries[0].isIntersecting && page.value <= MAX_PAGES) {
       fetchPosts()
     }
@@ -57,7 +61,7 @@ async function fetchPosts() {
 
 function addNewPost(newPost) {
   posts.value.push(newPost)
-  showModal.value = false
+  store.posts.commit('posts/setShowModal', false)
 }
 
 const sortingFunctions = {
@@ -72,23 +76,26 @@ const sortedList = computed(() => {
 })
 
 const filteredAndSortedList = computed(() => {
-  return sortedList.value.filter((post) => post.title.includes(searchQuery.value.toLowerCase()))
+  return sortedList.value.filter((post) =>
+    post.title.includes(store.state.posts.searchQuery.toLowerCase()),
+  )
 })
 </script>
 
 <template>
   <LoaderSpinner v-if="isLoading" />
-  <AddPostForm :addNewPost="addNewPost" :showModal="showModal" @closeModal="showModal = false" />
+  <AddPostForm :addNewPost="addNewPost" />
   <header class="header">
     <h1 class="header--green">Posts page</h1>
     <div class="btns-wrapper">
-      <PostSearch v-model:searchQuery.trim="searchQuery" />
-      <!-- <button @click="page += 1" class="header-btn">Load more</button> -->
-      <button @click="showModal = true" class="header-btn">Add new post</button>
+      <PostSearch />
+      <button @click="$store.commit('posts/setShowModal', true)" class="header-btn">
+        Add new post
+      </button>
     </div>
   </header>
   <main class="main">
-    <PostsList :posts="filteredAndSortedList" :searchQuery="searchQuery" />
+    <PostsList :posts="filteredAndSortedList" />
     <div ref="observerRef" class="obs"></div>
   </main>
   <footer class="footer">

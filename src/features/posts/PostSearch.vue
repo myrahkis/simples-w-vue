@@ -1,13 +1,12 @@
-<script setup>
-const { searchQuery } = defineProps({ searchQuery: String })
-</script>
+<script setup></script>
 
 <template>
   <input
     class="input u-mr-sm"
     type="text"
     placeholder="Search by title"
-    @input="$emit('update:searchQuery', $event.target.value)"
+    :value="$store.state.posts.searchQuery"
+    @input="$store.commit('posts/setSearchQuery', $event.target.value)"
   />
 </template>
 

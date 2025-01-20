@@ -1,14 +1,11 @@
-<script setup>
-const { showModal } = defineProps({ showModal: Boolean })
-const emit = defineEmits(['closeModal']);
-
-function handleBackgroundClick() {
-  emit('closeModal', false);
-}
-</script>
+<script setup></script>
 
 <template>
-  <div class="modal-bg" v-if="showModal" @click.stop="handleBackgroundClick">
+  <div
+    class="modal-bg"
+    v-if="$store.state.posts.showModal"
+    @click.stop="$store.commit('posts/setShowModal', false)"
+  >
     <slot></slot>
   </div>
 </template>

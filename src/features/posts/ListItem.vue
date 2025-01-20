@@ -1,11 +1,17 @@
 <script setup>
-const { post, searchQuery } = defineProps({ post: Object, searchQuery: String })
+import { computed } from 'vue'
+import { useStore } from 'vuex'
+
+const { post } = defineProps({ post: Object })
+
+const store = useStore()
+const searchQuery = computed(() => store.state.posts.searchQuery)
 
 const highlightSearch = (text) => {
-  if (!searchQuery) return text
+  if (!store.state.posts.searchQuery) return text
 
   // Создаем регулярное выражение для поиска
-  const regex = new RegExp(`(${searchQuery})`, 'gi')
+  const regex = new RegExp(`(${searchQuery.value})`, 'gi')
   return text.replace(regex, '<span class="highlight">$1</span>')
 }
 </script>
