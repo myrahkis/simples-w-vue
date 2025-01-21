@@ -22,7 +22,6 @@ const { todos, checkTodo } = defineProps(['todos', 'checkTodo'])
   display: flex;
   flex-direction: column;
   justify-self: center;
-  /* background-color: brown; */
   padding: 1rem 2rem;
 }
 .check {
@@ -70,9 +69,17 @@ const { todos, checkTodo } = defineProps(['todos', 'checkTodo'])
   &:hover {
     background-color: #0c0d30;
   }
+
+  @media screen and (max-width: 562px) {
+    font-size: 2rem;
+  }
+  @media screen and (max-width: 451px) {
+    font-size: 1.8rem;
+  }
 }
 .todo-item {
   width: 100%;
+  overflow-wrap: anywhere;
 }
 .list-move,
 .list-enter-active,

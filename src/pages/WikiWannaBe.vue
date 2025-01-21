@@ -1,9 +1,9 @@
 <script setup>
+import { ref } from 'vue'
+import { getParsedPage, getSearchResults } from '@/services/wikiApi'
 import ResultsList from '@/features/wiki/ResultsList.vue'
 import SearchInput from '@/features/wiki/SearchInput.vue'
-import { getParsedPage, getSearchResults } from '@/services/wikiApi'
 import LoaderSpinner from '@/ui/LoaderSpinner.vue'
-import { ref } from 'vue'
 
 const searchQuery = ref('')
 const searchResult = ref([])

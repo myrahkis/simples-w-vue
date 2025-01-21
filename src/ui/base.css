@@ -41,6 +41,14 @@ button {
   border-radius: 2rem;
   font-size: 1.8rem;
   color: white;
+
+  @media screen and (max-width: 562px) {
+    font-size: 1.5rem;
+  }
+  @media screen and (max-width: 451px) {
+    font-size: 1.4rem;
+    font-weight: 600;
+  }
 }
 
 .header--green {
@@ -50,8 +58,8 @@ button {
   padding: 1rem;
   padding-bottom: 2rem;
   text-align: center;
-  border-bottom-right-radius: 50%;
-  border-bottom-left-radius: 50%;
+  border-bottom-right-radius: 30%;
+  border-bottom-left-radius: 30%;
 }
 
 .input {
@@ -68,6 +76,15 @@ button {
     outline: 3px solid var(--neon-pink-color);
     outline-offset: 5px;
   }
+
+  @media screen and (max-width: 562px) {
+    font-size: 1.5rem;
+    padding: 0.5rem 1rem;
+    width: 25rem;
+  }
+  @media screen and (max-width: 451px) {
+    width: 22rem;
+  }
 }
 
 a:link,
@@ -78,13 +95,11 @@ a:visited {
 
 .highlight {
   background-color: var(--neon-green-color);
-  /* color: var(--dark-bg-color); */
 }
 
 .mw-content-ltr,
 .mw-parser-output {
   display: block;
-  /* flex-direction: column; */
 
   a {
     pointer-events: none;
@@ -93,7 +108,6 @@ a:visited {
   tbody {
     background-color: transparent;
     float: right !important;
-    /* border: 1px solid var(--text-color); */
 
     .infobox-header {
       a {
@@ -126,7 +140,6 @@ a:visited {
   }
 
   .infobox {
-    /* align-self: flex-end; */
     float: right;
     width: min-content;
     border: 1px solid var(--text-color);

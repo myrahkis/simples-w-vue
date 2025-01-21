@@ -23,7 +23,7 @@ function submitHandle() {
 </script>
 
 <template>
-  <form @submit.prevent="submitHandle" class="wrapper">
+  <form @submit.prevent="submitHandle" class="form-wrapper">
     <input type="text" v-model="todo" placeholder="Enter a todo" class="input" />
     <button type="submit" class="add-btn">Add</button>
     <button @click="onDelete" class="dlt-checked">Delete finished</button>
@@ -31,10 +31,17 @@ function submitHandle() {
 </template>
 
 <style scoped>
-.wrapper {
+.form-wrapper {
   display: flex;
   gap: 1.5rem;
   padding: 1.5rem;
+
+  @media screen and (max-width: 562px) {
+    padding: 1rem;
+  }
+  @media screen and (max-width: 451px) {
+    gap: 1rem;
+  }
 }
 
 .add-btn {
@@ -51,6 +58,10 @@ function submitHandle() {
 
   &:hover::after {
     transform: scaleX(1);
+  }
+
+  @media screen and (max-width: 562px) {
+    width: min-content;
   }
 }
 .dlt-checked::after {

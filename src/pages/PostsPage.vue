@@ -6,8 +6,8 @@ import AddPostForm from '@/features/posts/AddPostForm.vue'
 import PostsList from '@/features/posts/PostsList.vue'
 import SortList from '@/ui/SortList.vue'
 import PostSearch from '@/features/posts/PostSearch.vue'
-import usePosts from '@/hooks/usePosts'
-import useIntersection from '@/hooks/useIntersection'
+import usePosts from '@/features/posts/usePosts'
+import useIntersection from '@/features/posts/useIntersection'
 
 const MAX_PAGES = Math.ceil(100 / 12)
 const order = ref('default')

@@ -79,10 +79,16 @@ const sortedTodos = computed(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* background-color: aquamarine; */
   grid-column: 1 / -1;
   font-size: 2rem;
   gap: 1.5rem;
+
+  @media screen and (max-width: 680px) {
+    font-size: 1.7rem;
+  }
+  @media screen and (max-width: 562px) {
+    font-size: 1.3rem;
+  }
 }
 .list {
   overflow-y: auto;
@@ -95,6 +101,10 @@ const sortedTodos = computed(() => {
   scrollbar-width: thin;
   scrollbar-gutter: both-edges;
   scrollbar-color: #0c0d30 #07081d;
+
+  @media screen and (max-width: 451px) {
+    grid-column: 1 / -1;
+  }
 }
 .wrapper {
   display: flex;
@@ -103,6 +113,10 @@ const sortedTodos = computed(() => {
   padding: 2rem;
   gap: 1rem;
   font-size: 2rem;
+
+  @media screen and (max-width: 451px) {
+    padding: 1.5rem;
+  }
 }
 .clear-btn {
   background-color: transparent;
@@ -115,7 +129,6 @@ const sortedTodos = computed(() => {
   }
 }
 .footer {
-  /* background-color: yellowgreen; */
   grid-column: 1 / -1;
   grid-row: 3 / 3;
 }

@@ -58,8 +58,8 @@ const isOpen = ref(false)
   display: flex;
   align-items: center;
   cursor: pointer;
-  top: 1rem;
-  right: 45rem;
+  top: 0.5rem;
+  left: 5rem;
   background-color: var(--neon-green-color);
   padding: 0.3rem 0.7rem;
   border-radius: 2rem;
@@ -78,23 +78,61 @@ const isOpen = ref(false)
       color: var(--neon-green-color);
     }
   }
+
+  @media screen and (max-width: 680px) {
+    top: 1rem;
+    left: 3rem;
+
+    svg {
+      width: 3.5rem;
+      height: 3.5rem;
+    }
+  }
+  @media screen and (max-width: 562px) {
+    top: 0.5rem;
+    left: 2rem;
+  }
+  @media screen and (max-width: 451px) {
+    left: 1rem;
+  }
 }
 
 .nav-bg {
   position: fixed;
-  top: 1rem;
-  right: 45rem;
+  top: 0.5rem;
+  left: 5rem;
   height: 5rem;
   width: 5rem;
   border-radius: 50%;
   z-index: 1000;
   background-image: radial-gradient(var(--neon-green-color), var(--neon-pink-color));
   transition: all 0.7s ease-in-out;
+
+  @media screen and (max-width: 680px) {
+    top: 1rem;
+    left: 3.1rem;
+    height: 4rem;
+    width: 4rem;
+  }
+  @media screen and (max-width: 562px) {
+    top: 0.5rem;
+    left: 2.1rem;
+  }
+  @media screen and (max-width: 451px) {
+    left: 1.1rem;
+  }
 }
 
 .checkbox:checked ~ .nav-bg {
   overflow: hidden;
-  transform: scale(50);
+  transform: scale(75);
+
+  @media screen and (max-width: 680px) {
+    transform: scale(45);
+  }
+  @media screen and (max-width: 451px) {
+    transform: scale(40);
+  }
 }
 
 .nav-list {
