@@ -1,8 +1,8 @@
 <script setup>
-import ListItem from './ListItem.vue';
+import ListItem from './ListItem.vue'
 
 const { posts } = defineProps({
-  posts: Array
+  posts: Array,
 })
 </script>
 
@@ -19,6 +19,14 @@ const { posts } = defineProps({
   column-gap: 1.5rem;
   padding: 2rem 4rem;
   list-style: none;
+
+  @media screen and (max-width: 1200px) {
+    grid-template-columns: 1fr 1fr;
+  }
+  @media screen and (max-width: 767px) {
+    display: flex;
+    flex-direction: column;
+  }
 }
 
 .list-move,

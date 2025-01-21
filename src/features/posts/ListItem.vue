@@ -35,6 +35,10 @@ const highlightSearch = (text) => {
   background-color: var(--dark-bg-color);
   box-shadow: 0 0.5rem 1.5rem black;
   border-radius: 2rem;
+
+  @media screen and (max-width: 767px) {
+    padding: 2rem 2.5rem;
+  }
 }
 .heading {
   display: flex;

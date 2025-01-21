@@ -7,7 +7,12 @@ const { onSubmit } = defineProps({
 
 <template>
   <form @submit.prevent="onSubmit" class="form">
-    <input type="text" @input="$emit('update:searchQuery', $event.target.value)" class="input" />
+    <input
+      type="text"
+      @input="$emit('update:searchQuery', $event.target.value)"
+      @focus="$emit('focus')"
+      class="input"
+    />
     <button type="submit" class="find-btn">
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -27,15 +32,17 @@ const { onSubmit } = defineProps({
 
 <style scoped>
 .form {
+  position: relative;
   display: flex;
   justify-content: center;
 
   .input {
     background-color: white;
     outline-color: var(--dark-bg-color);
-    outline-offset: -2.5px;
+    outline-offset: -2px;
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
+    transition: all 0.15s;
   }
 }
 

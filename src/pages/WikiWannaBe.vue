@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import { getParsedPage, getSearchResults } from '@/services/wikiApi'
 import ResultsList from '@/features/wiki/ResultsList.vue'
 import SearchInput from '@/features/wiki/SearchInput.vue'
@@ -9,8 +9,29 @@ const searchQuery = ref('')
 const searchResult = ref([])
 const isLoading = ref(false)
 const error = ref(null)
+const isInputFocused = ref(false)
 
 const selectedPage = ref('')
+
+function handleFocus() {
+  isInputFocused.value = true
+}
+// function handleBlur() {
+//   isInputFocused.value = false
+// }
+
+function handleBlur(event) {
+  if (!event.target.closest('.header') && !event.target.closest('.results-list')) {
+    isInputFocused.value = false
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('click', handleBlur)
+})
+onUnmounted(() => {
+  document.removeEventListener('click', handleBlur)
+})
 
 async function submitHandle() {
   if (searchQuery.value === '') return
@@ -39,6 +60,8 @@ async function appendPage(title) {
 
     if (container) container.innerHTML = selectedPage.value
 
+    isInputFocused.value = false
+
     error.value = ''
   } catch (err) {
     error.value = err.message
@@ -54,9 +77,13 @@ async function appendPage(title) {
   <div class="wiki-grid">
     <header class="header header--green">
       <h1 class="heading">The Simplest Wiki</h1>
-      <SearchInput v-model:searchQuery.trim="searchQuery" :onSubmit="submitHandle" />
+      <SearchInput
+        v-model:searchQuery.trim="searchQuery"
+        @focus="handleFocus"
+        :onSubmit="submitHandle"
+      />
     </header>
-    <aside v-if="searchResult.length > 0" class="results-list">
+    <aside v-if="isInputFocused && searchResult.length > 0" class="results-list">
       <ResultsList :searchResult="searchResult" :onResultClick="appendPage" />
     </aside>
     <main v-show="selectedPage !== ''">
@@ -69,16 +96,17 @@ async function appendPage(title) {
 <style scoped>
 .wiki-grid {
   position: relative;
-  display: grid;
+  display: flex;
+  flex-direction: column;
+  /* display: grid;
   grid-template-columns: 0.4fr 1fr;
-  grid-template-rows: 1fr auto;
+  grid-template-rows: 1fr auto; */
 }
 
 .header {
   position: sticky;
   top: 0;
   z-index: 10;
-  grid-column: 1 / -1;
   box-shadow: 0 0.5rem 2rem var(--dark-bg-color);
 
   .heading {
@@ -86,22 +114,19 @@ async function appendPage(title) {
     padding-bottom: 1.2rem;
     font-size: 3.5rem;
   }
-}
 
-.results-list {
-  grid-row: 2 / -1;
-  display: flex;
-  flex-direction: column;
-  /* max-width: 100%; */
-  padding: 2rem;
+  @media screen and (max-width: 680px) {
+    grid-row: 1 / 2;
+  }
 }
 
 .wiki-page {
   gap: 2rem;
-  margin-top: 1.5rem;
+  margin: 3rem;
   padding: 2rem;
   font-size: 1.5rem;
   border: 1px solid var(--neon-green-color);
+  border-radius: 2rem;
 }
 
 .error {
