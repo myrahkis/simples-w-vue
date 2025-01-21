@@ -27,6 +27,9 @@ const { posts } = defineProps({
     display: flex;
     flex-direction: column;
   }
+  @media screen and (max-width: 562px) {
+    padding: 0 2rem;
+  }
 }
 
 .list-move,

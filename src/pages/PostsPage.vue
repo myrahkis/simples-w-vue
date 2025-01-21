@@ -67,14 +67,28 @@ const filteredAndSortedList = computed(() => {
 <style scoped>
 .header {
   font-size: 2rem;
+
+  @media screen and (max-width: 562px) {
+    font-size: 1.8rem;
+  }
 }
 .main {
-  height: 65vh;
+  height: 68vh;
   overflow-y: auto;
 
   scrollbar-width: thin;
   scroll-behavior: smooth;
   scrollbar-color: var(--neon-green-color) transparent;
+
+  @media screen and (max-width: 1200px) {
+    height: 70vh;
+  }
+  @media screen and (max-width: 991px) {
+    height: 68vh;
+  }
+  @media screen and (max-width: 562px) {
+    height: 71vh;
+  }
 }
 .obs {
   height: 5vh;

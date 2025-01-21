@@ -39,6 +39,9 @@ const highlightSearch = (text) => {
   @media screen and (max-width: 767px) {
     padding: 2rem 2.5rem;
   }
+  @media screen and (max-width: 562px) {
+    font-size: 1.3rem;
+  }
 }
 .heading {
   display: flex;
@@ -49,6 +52,10 @@ const highlightSearch = (text) => {
 .title {
   font-size: 2rem;
   width: 70%;
+
+  @media screen and (max-width: 562px) {
+    font-size: 1.8rem;
+  }
 }
 .body {
   padding-top: 1rem;

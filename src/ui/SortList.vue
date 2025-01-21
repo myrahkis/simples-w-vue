@@ -24,7 +24,7 @@ const { order, options } = defineProps({ order: String, options: Array })
 }
 .sort-label {
   @media screen and (max-width: 451px) {
-    display: none;
+   font-size: 1.5rem;
   }
 }
 </style>

@@ -113,6 +113,10 @@ async function appendPage(title) {
     text-align: center;
     padding-bottom: 1.2rem;
     font-size: 3.5rem;
+
+    @media screen and (max-width: 562px) {
+      font-size: 2.8rem;
+    }
   }
 
   @media screen and (max-width: 680px) {
@@ -127,6 +131,12 @@ async function appendPage(title) {
   font-size: 1.5rem;
   border: 1px solid var(--neon-green-color);
   border-radius: 2rem;
+
+  @media screen and (max-width: 562px) {
+    padding: 1rem;
+    margin: 0;
+    margin-top: 1.5rem;
+  }
 }
 
 .error {

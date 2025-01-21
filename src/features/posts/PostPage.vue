@@ -62,6 +62,10 @@ function backHandle() {
   align-items: center;
   gap: 1.5rem;
   width: 35%;
+
+  @media screen and (max-width: 562px) {
+    width: 85%;
+  }
 }
 .post-card {
   border: 1px solid var(--neon-green-color);

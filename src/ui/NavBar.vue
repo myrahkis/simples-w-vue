@@ -130,9 +130,6 @@ const isOpen = ref(false)
   @media screen and (max-width: 680px) {
     transform: scale(45);
   }
-  @media screen and (max-width: 451px) {
-    transform: scale(40);
-  }
 }
 
 .nav-list {

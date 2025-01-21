@@ -77,6 +77,10 @@ function doneCalculating() {
 <style scoped>
 .header {
   font-size: 2rem;
+
+  @media screen and (max-width: 562px) {
+    font-size: 1.5rem;
+  }
 }
 .container {
   display: flex;

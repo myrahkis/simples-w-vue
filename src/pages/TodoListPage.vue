@@ -87,7 +87,7 @@ const sortedTodos = computed(() => {
     font-size: 1.7rem;
   }
   @media screen and (max-width: 562px) {
-    font-size: 1.3rem;
+    font-size: 1.2rem;
   }
 }
 .list {
