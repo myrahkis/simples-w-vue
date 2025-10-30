@@ -65,7 +65,9 @@ async function getDailyForecast(cityName) {
     if (!res.ok) throw new Error("Couldn't fetch daily forecast.")
 
     const data = await res.json()
-    console.log(data)
+    // console.log(data)
+    dailyForecast.value = data
+    console.log(dailyForecast.value)
   } catch (err) {
     console.error(err.message)
   }
@@ -75,6 +77,31 @@ function selectCityHandle(city) {
   selectedCity.value = city
 }
 
+const dailyForecastForWeek = computed(() => {
+  const hourly = dailyForecast.value?.hourly
+  if (!hourly) return []
+
+  const times = hourly.time || []
+  const temps = hourly.temperature_2m || []
+
+  const timeTempArr = times.map((t, i) => ({
+    time: t,
+    temp: `${temps[i]}${dailyForecast.value?.hourly_units?.temperature_2m}`,
+  }))
+
+  const grouped = timeTempArr.reduce((acc, item) => {
+    const date = item.time.split('T')[0]
+    if (!acc[date]) acc[date] = []
+
+    acc[date].push(item)
+    return acc
+  }, {})
+
+  return Object.entries(grouped).map(([date, hours]) => ({
+    date,
+    hours,
+  }))
+})
 watch(selectedCity, (newCity) => {
   getCityWeather(newCity)
   getDailyForecast(newCity)
@@ -98,6 +125,16 @@ watch(selectedCity, (newCity) => {
       Weather now: {{ weatherData?.current.temperature_2m }}
       {{ weatherData?.current_units.temperature_2m }}
     </h2>
+  </div>
+  <div v-if="dailyForecastForWeek">
+    <ul>
+      <li v-for="(day, index) in dailyForecastForWeek" :key="index">
+        <span>{{day.date}}</span>
+        <div v-for="({ time, temp }, index) in day.hours" :key="index">
+          {{ time }}: {{ temp }}
+        </div>
+      </li>
+    </ul>
   </div>
 </template>
 
