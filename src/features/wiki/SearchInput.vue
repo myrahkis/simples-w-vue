@@ -45,27 +45,4 @@ const { onSubmit } = defineProps({
     transition: all 0.15s;
   }
 }
-
-.find-btn {
-  background-color: var(--dark-bg-color);
-  padding: 1rem 1.5rem;
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
-  transition: all 0.15s;
-
-  svg {
-    width: 2.5rem;
-    height: 2.5rem;
-    fill: var(--text-color);
-  }
-
-  &:hover {
-    box-shadow: 0 0.5rem 0.6rem #434358d7;
-    transform: translateY(-3px);
-  }
-  &:active {
-    transform: translateY(0);
-    box-shadow: 0 0.3rem 0.3rem #434358d7;
-  }
-}
 </style>
