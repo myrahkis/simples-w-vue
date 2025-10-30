@@ -40,6 +40,9 @@ const isOpen = ref(false)
         <RouterLink to="/calculator">
           <li class="link" @click="isOpen = false">Calculator</li>
         </RouterLink>
+        <RouterLink to="/weather">
+          <li class="link" @click="isOpen = false">Weather</li>
+        </RouterLink>
       </ul>
     </div>
   </div>

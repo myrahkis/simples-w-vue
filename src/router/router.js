@@ -4,6 +4,7 @@ import PostsPage from '@/pages/PostsPage.vue'
 import TodoListPage from '@/pages/TodoListPage.vue'
 import WikiWannaBe from '@/pages/WikiWannaBe.vue'
 import { createRouter, createWebHistory } from 'vue-router'
+import WeatherPage from '@/pages/WeatherPage.vue'
 
 const routes = [
   {
@@ -16,19 +17,23 @@ const routes = [
   },
   {
     path: '/wiki',
-    component: WikiWannaBe,
+    component: () => WikiWannaBe,
   },
   {
     path: '/calculator',
-    component: CalculatorPage,
+    component: () => CalculatorPage,
   },
   {
     path: '/posts',
-    component: PostsPage,
+    component: () => PostsPage,
   },
   {
     path: '/posts/:id',
-    component: PostPage,
+    component: () => PostPage,
+  },
+  {
+    path: '/weather',
+    component: () => WeatherPage,
   },
 ]
 
