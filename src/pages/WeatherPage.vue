@@ -1,5 +1,4 @@
 <script setup>
-import { identity } from 'mathjs'
 import { computed, ref, watch } from 'vue'
 
 const cityName = ref('')
@@ -41,36 +40,58 @@ async function getCities() {
 async function getCityWeather(newCity) {
   try {
     const res = await fetch(
-      `https://api.open-meteo.com/v1/forecast?latitude=${newCity?.lat}&longitude=${newCity?.lon}&current=temperature_2m,wind_speed_10m&hourly=temperature_2m,relative_humidity_2m,wind_speed_10m`,
+      `https://api.open-meteo.com/v1/forecast?latitude=${newCity?.lat}&longitude=${newCity?.lon}&current=temperature_2m,wind_speed_10m&hourly=temperature_2m,precipitation_probability,wind_speed_10m&forecast_days=1`,
     )
 
     if (!res.ok) throw new Error("couldn't fetch weather")
 
     const data = await res.json()
     weatherData.value = data
+    console.log(weatherData.value)
   } catch (err) {
     console.error(err)
   }
 }
+// async function getDailyForecast(cityName) {
+//   const todayStr = new Date().toISOString().split('T')[0]
+//   const today = new Date()
+//   today.setDate(today.getDate() + 7)
+//   const nextWeekStr = today.toISOString().split('T')[0]
+
+//   try {
+//     const res = await fetch(
+//       `https://api.open-meteo.com/v1/forecast?latitude=${cityName?.lat}&longitude=${cityName?.lon}&hourly=temperature_2m,precipitation_probability,wind_speed_10m&start_date=${todayStr}&end_date=${nextWeekStr}`,
+//     )
+
+//     if (!res.ok) throw new Error("Couldn't fetch daily forecast.")
+
+//     const data = await res.json()
+//     // console.log(data)
+//     dailyForecast.value = data
+//     console.log(dailyForecast.value)
+//   } catch (err) {
+//     console.error(err.message)
+//   }
+// }
 async function getDailyForecast(cityName) {
-  const todayStr = new Date().toISOString().split('T')[0]
-  const today = new Date()
-  today.setDate(today.getDate() + 7)
-  const nextWeekStr = today.toISOString().split('T')[0]
+  // const todayStr = new Date().toISOString().split('T')[0]
+  // const today = new Date()
+  // today.setDate(today.getDate() + 7)
+  // const nextWeekStr = today.toISOString().split('T')[0]
 
   try {
     const res = await fetch(
-      `https://api.open-meteo.com/v1/forecast?latitude=${cityName?.lat}&longitude=${cityName?.lon}&hourly=temperature_2m&start_date=${todayStr}&end_date=${nextWeekStr}`,
+      `https://api.open-meteo.com/v1/forecast?latitude=${cityName?.lat}&longitude=${cityName?.lon}&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,wind_speed_10m_max`,
     )
 
     if (!res.ok) throw new Error("Couldn't fetch daily forecast.")
 
     const data = await res.json()
+
     // console.log(data)
     dailyForecast.value = data
-    // console.log(dailyForecast.value)
   } catch (err) {
-    console.error(err.message)
+    console.log(err)
   }
 }
 
@@ -78,49 +99,92 @@ function selectCityHandle(city) {
   selectedCity.value = city
 }
 
-function formatForecastByHourly(forecast) {
-  const hourly = forecast.value?.hourly
+// function formatForecastByHourly(forecast) {
+// const daily = forecast.value?.daily
+// if (!daily) return []
+
+// const timeTempArr = daily.time.map((t, i) => ({
+//   date: new Date(t).toLocaleDateString(),
+//   tempMin: `${daily.temperature_2m_min[i]}${forecast.value?.daily_units?.temperature_2m_min}`,
+//   tempMax: `${daily.temperature_2m_max[i]}${forecast.value?.daily_units?.temperature_2m_min}`,
+//   rain: `${daily.precipitation_probability_max[i]}${forecast.value?.daily_units?.precipitation_probability_max}`,
+//   wind: `${daily.wind_speed_10m_max[i]}${forecast.value?.daily_units?.wind_speed_10m_max}`,
+// }))
+// console.log(timeTempArr)
+
+// const grouped = timeTempArr.reduce((acc, item) => {
+//   const dateObj = new Date(item.time)
+//   const date = dateObj.toLocaleDateString()
+
+//   if (!acc[date]) acc[date] = []
+
+//   acc[date].push({
+//     time: dateObj.toLocaleTimeString(undefined, {
+//       hour: '2-digit',
+//       minute: '2-digit',
+//     }),
+//     tempMin: item.tempMin,
+//     tempMax: item.tempMax,
+//     rain: item.rain,
+//     wind: item.wind,
+//   })
+//   return acc
+// }, {})
+
+// return timeTempArr
+// }
+
+const dayHourlyFormatted = computed(() => {
+  const hourly = weatherData.value?.hourly
   if (!hourly) return []
 
-  const times = hourly.time || []
-  const temps = hourly.temperature_2m || []
-
-  const timeTempArr = times.map((t, i) => ({
-    time: t,
-    temp: `${temps[i]}${forecast.value?.hourly_units?.temperature_2m}`,
-  }))
-
-  const grouped = timeTempArr.reduce((acc, item) => {
-    const dateObj = new Date(item.time)
-    const date = dateObj.toLocaleDateString()
-
-    if (!acc[date]) acc[date] = []
-
-    acc[date].push({
-      time: dateObj.toLocaleTimeString(undefined, {
+  console.log(
+    hourly.time.map((t, i) => ({
+      time: new Date(t).toLocaleTimeString(undefined, {
         hour: '2-digit',
         minute: '2-digit',
       }),
-      temp: item.temp,
-    })
-    return acc
-  }, {})
-
-  console.log(
-    Object.entries(grouped).map(([date, hours]) => ({
-      date,
-      hours,
+      temp: `${hourly.temperature_2m[i]}${weatherData.value?.hourly_units?.temperature_2m}`,
+      rain: `${hourly.precipitation_probability[i]}${weatherData.value?.hourly_units?.precipitation_probability}`,
+      wind: `${hourly.wind_speed_10m[i]}${weatherData.value?.hourly_units?.wind_speed_10m}`,
     })),
   )
-  return Object.entries(grouped).map(([date, hours]) => ({
-    date,
-    hours,
+  return hourly.time.map((t, i) => ({
+    time: new Date(t).toLocaleTimeString(undefined, {
+      hour: '2-digit',
+      minute: '2-digit',
+    }),
+    temp: `${hourly.temperature_2m[i]}${weatherData.value?.hourly_units?.temperature_2m}`,
+    rain: `${hourly.precipitation_probability[i]}${weatherData.value?.hourly_units?.precipitation_probability}`,
+    wind: `${hourly.wind_speed_10m[i]}${weatherData.value?.hourly_units?.wind_speed_10m}`,
   }))
-}
+})
 
-const dailyForecastFormated = computed(() => formatForecastByHourly(dailyForecast))
-const forecastToday = computed(() => dailyForecastFormated.value[0])
-const forecastForWeek = computed(() => dailyForecastFormated.value?.filter((_, idx) => idx !== 0))
+const dailyForecastFormatted = computed(() => {
+  const daily = dailyForecast.value?.daily
+  if (!daily) return []
+
+  return daily.time.map((t, i) => ({
+    date: new Date(t).toLocaleDateString(),
+    tempMin: `${daily.temperature_2m_min[i]}${dailyForecast.value?.daily_units?.temperature_2m_min}`,
+    tempMax: `${daily.temperature_2m_max[i]}${dailyForecast.value?.daily_units?.temperature_2m_min}`,
+    rain: `${daily.precipitation_probability_max[i]}${dailyForecast.value?.daily_units?.precipitation_probability_max}`,
+    wind: `${daily.wind_speed_10m_max[i]}${dailyForecast.value?.daily_units?.wind_speed_10m_max}`,
+  }))
+})
+// const forecastToday = computed(() => dailyForecastFormated.value[0])
+// const forecastForWeek = computed(() =>
+//   dailyForecastFormated.value
+//     ?.filter((_, idx) => idx !== 0)
+//     .map((day) => {
+//       return {
+//         date: day.date,
+//         avgTemp: Math.round(
+//           day?.hours?.reduce((acc, cur) => +cur.temp.split('°')[0] + acc, 0) / day?.hours.length,
+//         ),
+//       }
+//     }),
+// )
 
 watch(selectedCity, (newCity) => {
   getCityWeather(newCity)
@@ -147,7 +211,7 @@ watch(selectedCity, (newCity) => {
           ></path>
         </svg>
       </button>
-      <ul class="result-list" v-if="forecastForWeek.length === 0">
+      <ul class="result-list">
         <li v-for="(city, index) in citiesData" :key="index" @click="selectCityHandle(city)">
           {{ city?.name }}, {{ city?.state }}, {{ city?.countryCode }}
         </li>
@@ -155,24 +219,45 @@ watch(selectedCity, (newCity) => {
     </div>
   </header>
   <div class="city-results-wrapper">
-    <span>{{ forecastToday?.date }}</span>
+    <span>{{ weatherData?.date }}</span>
     <h2 class="selected-city" v-if="selectedCity.name && weatherData">
       {{ selectedCity.name }}: {{ weatherData?.current.temperature_2m }}
       {{ weatherData?.current_units.temperature_2m }}
     </h2>
     <ul class="today-dayly">
-      <li v-for="({ time, temp }, index) in forecastToday?.hours" :key="index">
+      <li v-for="({ time, temp, rain, wind }, index) in dayHourlyFormatted" :key="index">
         <span>{{ time }}</span>
         <span>{{ temp }}</span>
+        <span><img src="/icons/rainIcon.svg" alt="" /> {{ rain }}</span>
+        <span><img src="/icons/windIcon.svg" alt="" /> {{ wind }}</span>
       </li>
     </ul>
-    <div class="dayly-forecast-wrapper" v-if="forecastForWeek">
-      <h3 class="dayly-forecast-heading">Weather this week:</h3>
+    <div class="dayly-forecast-wrapper" v-if="dailyForecastFormatted">
+      <h3 class="dayly-forecast-heading" v-if="dailyForecast">Weather this week:</h3>
       <ul class="dayly-forecast">
-        <li v-for="(day, index) in forecastForWeek" :key="index" class="dayly-forecast-day">
-          <span>{{ day.date }}</span>
-          <div v-for="({ time, temp }, index) in day.hours" :key="index">
-            {{ time }}: {{ temp }}
+        <li
+          v-for="({ date, tempMin, tempMax, rain, wind }, index) in dailyForecastFormatted"
+          :key="index"
+          class="dayly-forecast-day"
+        >
+          <p>{{ date }}</p>
+          <div>
+            <span>
+              <img src="/icons/minTempIcon.svg" alt="" />
+              {{ tempMin }}
+            </span>
+            <span>
+              <img src="/icons/maxTempIcon.svg" alt="" />
+              {{ tempMax }}
+            </span>
+            <span>
+              <img src="/icons/rainIcon.svg" alt="" />
+              {{ rain }}
+            </span>
+            <span>
+              <img src="/icons/windIcon.svg" alt="" />
+              {{ wind }}
+            </span>
           </div>
         </li>
       </ul>
@@ -181,14 +266,10 @@ watch(selectedCity, (newCity) => {
 </template>
 
 <style scoped>
-/* .weather-container {
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  max-width: 100vw;
-  padding: 2rem;
-} */
 .header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
   font-size: 2rem;
 }
 .input-wrapper {
@@ -237,26 +318,34 @@ watch(selectedCity, (newCity) => {
   overflow-y: auto;
   list-style: none;
   display: flex;
-  gap: 2rem;
+  gap: 3rem;
   margin: 0 auto;
   /* justify-content: center; */
   width: 100%;
   padding: 2rem;
-  border: 1px solid var(--neon-green-color);
-  border-radius: 1rem;
+  /* background-color: var(--neon-pink-color);
+  color: var(--dark-bg-color); */
+  /* border: 1px solid var(--neon-green-color); */
+  /* border-radius: 1rem; */
 
   scrollbar-width: thin;
+  scrollbar-color: var(--neon-green-color) var(--dark-bg-color);
 
   li {
     display: flex;
     flex-direction: column;
     font-size: 1.5rem;
-    gap: 0.8rem;
+    gap: 1rem;
+
+    span {
+      display: inline-flex;
+      align-items: center;
+      width: max-content;
+    }
   }
 }
 
 .city-results-wrapper {
-  overflow: hidden;
   display: flex;
   flex-direction: column;
   width: 80%;
@@ -280,21 +369,33 @@ watch(selectedCity, (newCity) => {
 .dayly-forecast {
   list-style: none;
   display: flex;
+  flex-direction: column;
   gap: 1rem;
 }
 .dayly-forecast-day {
+  display: flex;
+  align-items: center;
+  gap: 8rem;
   border: 1px solid var(--neon-green-color);
   border-radius: 1rem;
+  padding: 1rem 1.5rem;
+
+  p {
+    font-size: 1.5rem;
+  }
 
   div {
-    font-size: 1.3rem;
-    padding: 0.5rem 1rem;
+    display: flex;
+    gap: 1rem;
+    width: 100%;
   }
 
   span {
-    padding: 0.5rem 1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
     font-size: 1.5rem;
-    border-bottom: 1px solid var(--neon-green-color);
+    width: max-content;
   }
 }
 </style>

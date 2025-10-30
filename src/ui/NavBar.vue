@@ -50,13 +50,21 @@ const isOpen = ref(false)
 
 <style scoped>
 .navigation {
-  overflow: hidden !important;
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 1400;
+}
+.menu-btn,
+.nav-list {
+  pointer-events: auto;
 }
 .checkbox {
   display: none;
 }
 .menu-btn {
-  position: fixed;
+  position: absolute;
   z-index: 1500;
   display: flex;
   align-items: center;
@@ -101,7 +109,7 @@ const isOpen = ref(false)
 }
 
 .nav-bg {
-  position: fixed;
+  position: absolute;
   top: 0.5rem;
   left: 5rem;
   height: 5rem;
@@ -127,7 +135,7 @@ const isOpen = ref(false)
 }
 
 .checkbox:checked ~ .nav-bg {
-  overflow: hidden;
+  overflow: hidden !important;
   transform: scale(75);
 
   @media screen and (max-width: 680px) {
