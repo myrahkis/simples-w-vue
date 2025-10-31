@@ -122,8 +122,8 @@ const isOpen = ref(false)
   @media screen and (max-width: 680px) {
     top: 1rem;
     left: 3.1rem;
-    height: 4rem;
-    width: 4rem;
+    height: 3.8rem;
+    width: 3.8rem;
   }
   @media screen and (max-width: 562px) {
     top: 0.5rem;

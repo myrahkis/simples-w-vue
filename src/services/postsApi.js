@@ -20,7 +20,6 @@ export async function addPost(post) {
     },
   })
 
-  // console.log(res);
   if (res.status !== 201) throw new Error("Couldn't add new post.")
 
   return res.data.body

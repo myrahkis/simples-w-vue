@@ -1,4 +1,5 @@
 <script setup>
+import { getCities, getCityWeather, getDailyForecast } from '@/services/WeatherApi'
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 
 const cityName = ref('')
@@ -7,7 +8,6 @@ const selectedCity = ref({})
 const weatherData = ref(null)
 const dailyForecast = ref(null)
 const isInputFocused = ref(false)
-const hoursList = ref(null)
 const hourRefs = ref([])
 
 const weatherMap = new Map([
@@ -41,62 +41,25 @@ const weatherMap = new Map([
   [99, 'Thunderstorm with heavy hail'],
 ])
 
+async function handleSearch() {
+  const cities = await getCities(cityName.value)
+  datas.value = cities
+}
+async function handleCurrentData() {
+  const cities = await getCityWeather(selectedCity.value.lat, selectedCity.value.lon)
+  weatherData.value = cities
+}
+async function handleDailyData() {
+  const cities = await getDailyForecast(selectedCity.value.lat, selectedCity.value.lon)
+  dailyForecast.value = cities
+}
+
 function handleFocus() {
   isInputFocused.value = true
 }
 function handleBlur(event) {
   if (!event.target.closest('.header') && !event.target.closest('.result-list')) {
     isInputFocused.value = false
-  }
-}
-
-async function getCities() {
-  try {
-    const res = await fetch(
-      `https://geocoding-api.open-meteo.com/v1/search?name=${cityName.value}&count=10&language=en&format=json`,
-    )
-
-    if (!res.ok) throw new Error("Couldn't fetch cities")
-
-    const data = await res.json()
-
-    datas.value = data.results
-    // console.log(data.results)
-  } catch (err) {
-    console.error(err)
-  }
-}
-
-async function getCityWeather(newCity) {
-  try {
-    const res = await fetch(
-      `https://api.open-meteo.com/v1/forecast?latitude=${newCity?.lat}&longitude=${newCity?.lon}&current=temperature_2m,wind_speed_10m,weather_code&hourly=temperature_2m,precipitation_probability,wind_speed_10m&forecast_days=1`,
-    )
-
-    if (!res.ok) throw new Error("couldn't fetch weather")
-
-    const data = await res.json()
-    weatherData.value = data
-    console.log(weatherData.value)
-  } catch (err) {
-    console.error(err)
-  }
-}
-
-async function getDailyForecast(cityName) {
-  try {
-    const res = await fetch(
-      `https://api.open-meteo.com/v1/forecast?latitude=${cityName?.lat}&longitude=${cityName?.lon}&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,wind_speed_10m_max`,
-    )
-
-    if (!res.ok) throw new Error("Couldn't fetch daily forecast.")
-
-    const data = await res.json()
-
-    // console.log(data)
-    dailyForecast.value = data
-  } catch (err) {
-    console.log(err)
   }
 }
 
@@ -107,6 +70,14 @@ function getActiveHour(time) {
 function getPastHours(time) {
   const now = new Date().toLocaleTimeString().slice(0, 2)
   return time.slice(0, 2) < now
+}
+function selectCityHandle(e) {
+  if (e.target.nodeName !== 'LI') return
+
+  const idx = +e.target.dataset.index
+
+  selectedCity.value = citiesData.value[idx]
+  isInputFocused.value = false
 }
 
 const citiesData = computed(() =>
@@ -121,22 +92,10 @@ const citiesData = computed(() =>
     }
   }),
 )
-
 const dayHourlyFormatted = computed(() => {
   const hourly = weatherData.value?.hourly
   if (!hourly) return []
 
-  console.log(
-    hourly.time.map((t, i) => ({
-      time: new Date(t).toLocaleTimeString(undefined, {
-        hour: '2-digit',
-        minute: '2-digit',
-      }),
-      temp: `${hourly.temperature_2m[i]}${weatherData.value?.hourly_units?.temperature_2m}`,
-      rain: `${hourly.precipitation_probability[i]}${weatherData.value?.hourly_units?.precipitation_probability}`,
-      wind: `${hourly.wind_speed_10m[i]}${weatherData.value?.hourly_units?.wind_speed_10m}`,
-    })),
-  )
   return hourly.time.map((t, i) => ({
     time: new Date(t).toLocaleTimeString(undefined, {
       hour: '2-digit',
@@ -147,7 +106,6 @@ const dayHourlyFormatted = computed(() => {
     wind: `${hourly.wind_speed_10m[i]}${weatherData.value?.hourly_units?.wind_speed_10m}`,
   }))
 })
-
 const dailyForecastFormatted = computed(() => {
   const daily = dailyForecast.value?.daily
   if (!daily) return []
@@ -161,18 +119,9 @@ const dailyForecastFormatted = computed(() => {
   }))
 })
 
-function selectCityHandle(e) {
-  if (e.target.nodeName !== 'LI') return
-
-  const idx = +e.target.dataset.index
-
-  selectedCity.value = citiesData.value[idx]
-  isInputFocused.value = false
-}
-
 watch(selectedCity, (newCity) => {
-  getCityWeather(newCity)
-  getDailyForecast(newCity)
+  handleCurrentData(newCity.lat, newCity.lon)
+  handleDailyData(newCity.lat, newCity.lon)
 })
 watch(
   dayHourlyFormatted,
@@ -204,14 +153,14 @@ onUnmounted(() => {
     <h1>Weather</h1>
     <div class="input-wrapper">
       <input
-        @focus="handleFocus"
-        @keypress.enter="getCities"
+        class="input"
         type="text"
         name="city-search"
         v-model="cityName"
-        class="input"
+        @focus="handleFocus"
+        @keypress.enter="handleSearch"
       />
-      <button @click="getCities" class="find-btn">
+      <button @click="handleSearch" class="find-btn">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           x="0px"
@@ -238,7 +187,7 @@ onUnmounted(() => {
   </header>
   <div class="city-results-wrapper">
     <div class="city-results-wrapper--top-centered">
-      <div class="days-forecast-wrapper">
+      <div class="days-forecast-wrapper" v-if="weatherData">
         <span class="date">{{ new Date(weatherData?.current.time)?.toLocaleDateString() }}</span>
         <h2 class="selected-city" v-if="selectedCity.name && weatherData">
           {{ selectedCity.name }}
@@ -249,7 +198,7 @@ onUnmounted(() => {
         </span>
         <span class="weather-code">{{ weatherMap.get(weatherData?.current.weather_code) }}</span>
         <div class="today-dayly">
-          <ul ref="hoursList">
+          <ul>
             <li
               v-for="({ time, temp, rain, wind }, index) in dayHourlyFormatted"
               :key="index"
@@ -385,8 +334,6 @@ onUnmounted(() => {
   overflow-x: auto;
   overflow-y: hidden;
   width: 100%;
-  /* margin: 0 auto; */
-  /* max-width: 100%; */
 
   scrollbar-width: thin;
   scrollbar-color: #9e219eff var(--dark-bg-color);
@@ -405,7 +352,6 @@ onUnmounted(() => {
     flex-direction: column;
     font-size: 1.5rem;
     gap: 1rem;
-    flex: 0 0 auto; /* не растягивается и не сжимается */
     scroll-snap-align: start;
 
     span {
@@ -451,7 +397,6 @@ onUnmounted(() => {
   flex-direction: column;
   gap: 1rem;
   max-width: 50%;
-  /* margin: 0 auto; */
 
   .dayly-forecast-heading {
     font-size: 2.2rem;
@@ -487,6 +432,66 @@ onUnmounted(() => {
     gap: 0.5rem;
     font-size: 1.5rem;
     width: max-content;
+  }
+}
+
+@media (max-width: 945px) {
+  .city-results-wrapper--top-centered {
+    flex-direction: column;
+  }
+  .days-forecast-wrapper {
+    width: 100%;
+  }
+  .dayly-forecast-wrapper {
+    width: fit-content;
+    max-width: fit-content;
+    margin: 0 auto;
+  }
+}
+@media (max-width: 520px) {
+  .today-dayly {
+    ul li {
+      font-size: clamp(1rem, 1.5vw, 1.5rem);
+
+      span {
+        &:nth-child(2) {
+          font-size: clamp(0.9em, 1vw, 1.1em);
+        }
+      }
+    }
+  }
+  .dayly-forecast-day {
+    gap: 3rem;
+    p {
+      font-size: clamp(1rem, 1.5vw, 1.5rem);
+    }
+    span {
+      font-size: clamp(1rem, 1.5vw, 1.5rem);
+    }
+  }
+  .days-forecast-wrapper {
+    .selected-city {
+      font-size: clamp(2rem, 3vw, 3rem);
+    }
+    .date {
+      font-size: clamp(1rem, 1.5vw, 1.5rem);
+    }
+    .current-temp {
+      font-size: clamp(1rem, 1.5vw, 1.5rem);
+    }
+    .weather-code {
+      font-size: clamp(1.2rem, 2vw, 1.8rem);
+    }
+  }
+  .result-list {
+    font-size: clamp(1.5rem, 2vw, 2rem);
+  }
+}
+@media (max-width: 400px) {
+  .dayly-forecast-day {
+    flex-direction: column;
+    align-items: start;
+    gap: 0.5rem;
   }
 }
 </style>
