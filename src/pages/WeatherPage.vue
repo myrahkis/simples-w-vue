@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 
 const cityName = ref('')
 const datas = ref([])
@@ -7,6 +7,8 @@ const selectedCity = ref({})
 const weatherData = ref(null)
 const dailyForecast = ref(null)
 const isInputFocused = ref(false)
+const hoursList = ref(null)
+const hourRefs = ref([])
 
 const weatherMap = new Map([
   [0, 'Clear sky'],
@@ -80,33 +82,8 @@ async function getCityWeather(newCity) {
     console.error(err)
   }
 }
-// async function getDailyForecast(cityName) {
-//   const todayStr = new Date().toISOString().split('T')[0]
-//   const today = new Date()
-//   today.setDate(today.getDate() + 7)
-//   const nextWeekStr = today.toISOString().split('T')[0]
 
-//   try {
-//     const res = await fetch(
-//       `https://api.open-meteo.com/v1/forecast?latitude=${cityName?.lat}&longitude=${cityName?.lon}&hourly=temperature_2m,precipitation_probability,wind_speed_10m&start_date=${todayStr}&end_date=${nextWeekStr}`,
-//     )
-
-//     if (!res.ok) throw new Error("Couldn't fetch daily forecast.")
-
-//     const data = await res.json()
-//     // console.log(data)
-//     dailyForecast.value = data
-//     console.log(dailyForecast.value)
-//   } catch (err) {
-//     console.error(err.message)
-//   }
-// }
 async function getDailyForecast(cityName) {
-  // const todayStr = new Date().toISOString().split('T')[0]
-  // const today = new Date()
-  // today.setDate(today.getDate() + 7)
-  // const nextWeekStr = today.toISOString().split('T')[0]
-
   try {
     const res = await fetch(
       `https://api.open-meteo.com/v1/forecast?latitude=${cityName?.lat}&longitude=${cityName?.lon}&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,wind_speed_10m_max`,
@@ -123,40 +100,14 @@ async function getDailyForecast(cityName) {
   }
 }
 
-// function formatForecastByHourly(forecast) {
-// const daily = forecast.value?.daily
-// if (!daily) return []
-
-// const timeTempArr = daily.time.map((t, i) => ({
-//   date: new Date(t).toLocaleDateString(),
-//   tempMin: `${daily.temperature_2m_min[i]}${forecast.value?.daily_units?.temperature_2m_min}`,
-//   tempMax: `${daily.temperature_2m_max[i]}${forecast.value?.daily_units?.temperature_2m_min}`,
-//   rain: `${daily.precipitation_probability_max[i]}${forecast.value?.daily_units?.precipitation_probability_max}`,
-//   wind: `${daily.wind_speed_10m_max[i]}${forecast.value?.daily_units?.wind_speed_10m_max}`,
-// }))
-// console.log(timeTempArr)
-
-// const grouped = timeTempArr.reduce((acc, item) => {
-//   const dateObj = new Date(item.time)
-//   const date = dateObj.toLocaleDateString()
-
-//   if (!acc[date]) acc[date] = []
-
-//   acc[date].push({
-//     time: dateObj.toLocaleTimeString(undefined, {
-//       hour: '2-digit',
-//       minute: '2-digit',
-//     }),
-//     tempMin: item.tempMin,
-//     tempMax: item.tempMax,
-//     rain: item.rain,
-//     wind: item.wind,
-//   })
-//   return acc
-// }, {})
-
-// return timeTempArr
-// }
+function getActiveHour(time) {
+  const now = new Date().toLocaleTimeString().slice(0, 2)
+  return time.slice(0, 2) === now
+}
+function getPastHours(time) {
+  const now = new Date().toLocaleTimeString().slice(0, 2)
+  return time.slice(0, 2) < now
+}
 
 const citiesData = computed(() =>
   datas.value?.map((city) => {
@@ -218,25 +169,28 @@ function selectCityHandle(e) {
   selectedCity.value = citiesData.value[idx]
   isInputFocused.value = false
 }
-// const forecastToday = computed(() => dailyForecastFormated.value[0])
-// const forecastForWeek = computed(() =>
-//   dailyForecastFormated.value
-//     ?.filter((_, idx) => idx !== 0)
-//     .map((day) => {
-//       return {
-//         date: day.date,
-//         avgTemp: Math.round(
-//           day?.hours?.reduce((acc, cur) => +cur.temp.split('°')[0] + acc, 0) / day?.hours.length,
-//         ),
-//       }
-//     }),
-// )
 
 watch(selectedCity, (newCity) => {
   getCityWeather(newCity)
   getDailyForecast(newCity)
 })
+watch(
+  dayHourlyFormatted,
+  async (newVal) => {
+    if (!newVal || newVal.length === 0) return
+    await nextTick()
+    const active = hourRefs.value.find((el) => el && el.classList.contains('active-hour'))
 
+    if (active) {
+      active.scrollIntoView({
+        behavior: 'smooth',
+        inline: 'center',
+        block: 'nearest',
+      })
+    }
+  },
+  { immediate: true, deep: true },
+)
 onMounted(() => {
   document.addEventListener('click', handleBlur)
 })
@@ -295,8 +249,13 @@ onUnmounted(() => {
         </span>
         <span class="weather-code">{{ weatherMap.get(weatherData?.current.weather_code) }}</span>
         <div class="today-dayly">
-          <ul>
-            <li v-for="({ time, temp, rain, wind }, index) in dayHourlyFormatted" :key="index">
+          <ul ref="hoursList">
+            <li
+              v-for="({ time, temp, rain, wind }, index) in dayHourlyFormatted"
+              :key="index"
+              :class="{ 'active-hour': getActiveHour(time), 'past-hour': getPastHours(time) }"
+              :ref="(el) => (hourRefs[index] = el)"
+            >
               <span>{{ time }}</span>
               <span>{{ temp }}</span>
               <span><img src="/icons/rainIcon.svg" alt="" /> {{ rain }}</span>
@@ -461,6 +420,14 @@ onUnmounted(() => {
       }
     }
   }
+}
+.active-hour {
+  border: 1px solid var(--neon-green-color);
+  padding: 0.5rem 1rem;
+  border-radius: 1rem;
+}
+.past-hour {
+  filter: brightness(0.6);
 }
 
 .city-results-wrapper {
