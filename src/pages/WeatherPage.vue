@@ -1,24 +1,21 @@
 <script setup>
-import { computed, ref, watch } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 
 const cityName = ref('')
 const datas = ref(null)
 const selectedCity = ref({})
 const weatherData = ref(null)
 const dailyForecast = ref(null)
+const isInputFocused = ref(false)
 
-const citiesData = computed(() =>
-  datas.value?.map((city) => {
-    return {
-      name: city.name,
-      countryCode: city.country_code,
-      state: city.admin1 || '',
-      timezone: city.timezone,
-      lat: city.latitude,
-      lon: city.longitude,
-    }
-  }),
-)
+function handleFocus() {
+  isInputFocused.value = true
+}
+function handleBlur(event) {
+  if (!event.target.closest('.header') && !event.target.closest('.result-list')) {
+    isInputFocused.value = false
+  }
+}
 
 async function getCities() {
   try {
@@ -134,6 +131,19 @@ function selectCityHandle(city) {
 // return timeTempArr
 // }
 
+const citiesData = computed(() =>
+  datas.value?.map((city) => {
+    return {
+      name: city.name,
+      countryCode: city.country_code,
+      state: city.admin1 || '',
+      timezone: city.timezone,
+      lat: city.latitude,
+      lon: city.longitude,
+    }
+  }),
+)
+
 const dayHourlyFormatted = computed(() => {
   const hourly = weatherData.value?.hourly
   if (!hourly) return []
@@ -190,13 +200,20 @@ watch(selectedCity, (newCity) => {
   getCityWeather(newCity)
   getDailyForecast(newCity)
 })
+
+onMounted(() => {
+  document.addEventListener('click', handleBlur)
+})
+onUnmounted(() => {
+  document.removeEventListener('click', handleBlur)
+})
 </script>
 
 <template>
   <header class="header header--green">
     <h1>Weather</h1>
     <div class="input-wrapper">
-      <input type="text" name="city-search" v-model="cityName" class="input" />
+      <input @focus="handleFocus" type="text" name="city-search" v-model="cityName" class="input" />
       <button @click="getCities" class="find-btn">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -211,7 +228,7 @@ watch(selectedCity, (newCity) => {
           ></path>
         </svg>
       </button>
-      <ul class="result-list">
+      <ul class="result-list" v-if="isInputFocused && datas.length > 0">
         <li v-for="(city, index) in citiesData" :key="index" @click="selectCityHandle(city)">
           {{ city?.name }}, {{ city?.state }}, {{ city?.countryCode }}
         </li>
