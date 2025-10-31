@@ -98,9 +98,6 @@ async function appendPage(title) {
   position: relative;
   display: flex;
   flex-direction: column;
-  /* display: grid;
-  grid-template-columns: 0.4fr 1fr;
-  grid-template-rows: 1fr auto; */
 }
 
 .header {
@@ -112,10 +109,10 @@ async function appendPage(title) {
   .heading {
     text-align: center;
     padding-bottom: 1.2rem;
-    font-size: 3.5rem;
+    /* font-size: 3.5rem; */
 
     @media screen and (max-width: 562px) {
-      font-size: 2.8rem;
+      /* font-size: 2.8rem; */
     }
   }
 

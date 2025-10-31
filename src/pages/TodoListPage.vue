@@ -80,15 +80,15 @@ const sortedTodos = computed(() => {
   flex-direction: column;
   align-items: center;
   grid-column: 1 / -1;
-  font-size: 2rem;
+  /* font-size: 2rem; */
   gap: 1.5rem;
 
-  @media screen and (max-width: 680px) {
+  /* @media screen and (max-width: 680px) {
     font-size: 1.7rem;
   }
   @media screen and (max-width: 562px) {
     font-size: 1.2rem;
-  }
+  } */
 }
 .list {
   overflow-y: auto;

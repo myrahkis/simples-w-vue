@@ -65,13 +65,13 @@ const filteredAndSortedList = computed(() => {
 </template>
 
 <style scoped>
-.header {
+/* .header {
   font-size: 2rem;
 
   @media screen and (max-width: 562px) {
     font-size: 1.8rem;
   }
-}
+} */
 .main {
   height: 68vh;
   overflow-y: auto;

@@ -77,8 +77,8 @@ const isOpen = ref(false)
   transition: all 0.3s;
 
   svg {
-    width: 4.5rem;
-    height: 4.5rem;
+    width: 3.5rem;
+    height: 3.5rem;
     color: white;
   }
 
@@ -95,8 +95,8 @@ const isOpen = ref(false)
     left: 3rem;
 
     svg {
-      width: 3.5rem;
-      height: 3.5rem;
+      width: 3rem;
+      height: 3rem;
     }
   }
   @media screen and (max-width: 562px) {
@@ -110,10 +110,10 @@ const isOpen = ref(false)
 
 .nav-bg {
   position: absolute;
-  top: 0.5rem;
-  left: 5rem;
-  height: 5rem;
-  width: 5rem;
+  top: 0.8rem;
+  left: 5.3rem;
+  height: 3.8rem;
+  width: 3.8rem;
   border-radius: 50%;
   z-index: 1000;
   background-image: radial-gradient(var(--neon-green-color), var(--neon-pink-color));
@@ -136,7 +136,7 @@ const isOpen = ref(false)
 
 .checkbox:checked ~ .nav-bg {
   overflow: hidden !important;
-  transform: scale(75);
+  transform: scale(90);
 
   @media screen and (max-width: 680px) {
     transform: scale(45);

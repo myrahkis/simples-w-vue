@@ -48,9 +48,6 @@ function backHandle() {
 </template>
 
 <style scoped>
-.header {
-  font-size: 2rem;
-}
 .container {
   position: fixed;
   top: 50%;

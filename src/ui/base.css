@@ -15,14 +15,12 @@
 }
 
 html {
-  min-height: 100vh;
-  max-width: 100vw;
+  height: 100%;
   font-size: 62.5%;
 }
 
 body {
   height: 100%;
-  width: 100%;
   background-color: var(--dark-bg-color);
   color: var(--text-color);
 }
@@ -30,7 +28,9 @@ body {
 input {
   background-color: var(--text-color);
 }
-
+h1 {
+  font-size: 3rem;
+}
 button {
   cursor: pointer;
   border: none;
@@ -90,7 +90,7 @@ button {
 
 .find-btn {
   background-color: var(--dark-bg-color);
-  padding: 1rem 1.5rem;
+  padding: 0.8rem 1.2rem;
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
   transition: all 0.15s;

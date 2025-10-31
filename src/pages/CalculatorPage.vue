@@ -75,13 +75,13 @@ function doneCalculating() {
 </template>
 
 <style scoped>
-.header {
-  font-size: 2rem;
+/* .header {
+  font-size: 1.6rem;
 
   @media screen and (max-width: 562px) {
     font-size: 1.5rem;
   }
-}
+} */
 .container {
   display: flex;
   justify-content: center;

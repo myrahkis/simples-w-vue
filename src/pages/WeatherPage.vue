@@ -2,11 +2,42 @@
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 
 const cityName = ref('')
-const datas = ref(null)
+const datas = ref([])
 const selectedCity = ref({})
 const weatherData = ref(null)
 const dailyForecast = ref(null)
 const isInputFocused = ref(false)
+
+const weatherMap = new Map([
+  [0, 'Clear sky'],
+  [1, 'Mainly clear'],
+  [2, 'Partly cloudy'],
+  [3, 'Overcast'],
+  [45, 'Fog'],
+  [48, 'Depositing rime fog'],
+  [51, 'Light drizzle'],
+  [53, 'Moderate drizzle'],
+  [55, 'Dense drizzle'],
+  [56, 'Light freezing drizzle'],
+  [57, 'Dense freezing drizzle'],
+  [61, 'Slight rain'],
+  [63, 'Moderate rain'],
+  [65, 'Heavy rain'],
+  [66, 'Light freezing rain'],
+  [67, 'Heavy freezing rain'],
+  [71, 'Slight snow fall'],
+  [73, 'Moderate snow fall'],
+  [75, 'Heavy snow fall'],
+  [77, 'Snow grains'],
+  [80, 'Slight rain showers'],
+  [81, 'Moderate rain showers'],
+  [82, 'Violent rain showers'],
+  [85, 'slight snow showers'],
+  [86, 'Heavy snow showers'],
+  [95, 'Slight thunderstorm'],
+  [96, 'Thunderstorm with slight hail'],
+  [99, 'Thunderstorm with heavy hail'],
+])
 
 function handleFocus() {
   isInputFocused.value = true
@@ -37,7 +68,7 @@ async function getCities() {
 async function getCityWeather(newCity) {
   try {
     const res = await fetch(
-      `https://api.open-meteo.com/v1/forecast?latitude=${newCity?.lat}&longitude=${newCity?.lon}&current=temperature_2m,wind_speed_10m&hourly=temperature_2m,precipitation_probability,wind_speed_10m&forecast_days=1`,
+      `https://api.open-meteo.com/v1/forecast?latitude=${newCity?.lat}&longitude=${newCity?.lon}&current=temperature_2m,wind_speed_10m,weather_code&hourly=temperature_2m,precipitation_probability,wind_speed_10m&forecast_days=1`,
     )
 
     if (!res.ok) throw new Error("couldn't fetch weather")
@@ -90,10 +121,6 @@ async function getDailyForecast(cityName) {
   } catch (err) {
     console.log(err)
   }
-}
-
-function selectCityHandle(city) {
-  selectedCity.value = city
 }
 
 // function formatForecastByHourly(forecast) {
@@ -164,7 +191,7 @@ const dayHourlyFormatted = computed(() => {
       hour: '2-digit',
       minute: '2-digit',
     }),
-    temp: `${hourly.temperature_2m[i]}${weatherData.value?.hourly_units?.temperature_2m}`,
+    temp: `${Math.round(hourly.temperature_2m[i])}${weatherData.value?.hourly_units?.temperature_2m}`,
     rain: `${hourly.precipitation_probability[i]}${weatherData.value?.hourly_units?.precipitation_probability}`,
     wind: `${hourly.wind_speed_10m[i]}${weatherData.value?.hourly_units?.wind_speed_10m}`,
   }))
@@ -176,12 +203,21 @@ const dailyForecastFormatted = computed(() => {
 
   return daily.time.map((t, i) => ({
     date: new Date(t).toLocaleDateString(),
-    tempMin: `${daily.temperature_2m_min[i]}${dailyForecast.value?.daily_units?.temperature_2m_min}`,
-    tempMax: `${daily.temperature_2m_max[i]}${dailyForecast.value?.daily_units?.temperature_2m_min}`,
+    tempMin: `${Math.round(daily.temperature_2m_min[i])}${dailyForecast.value?.daily_units?.temperature_2m_min}`,
+    tempMax: `${Math.round(daily.temperature_2m_max[i])}${dailyForecast.value?.daily_units?.temperature_2m_min}`,
     rain: `${daily.precipitation_probability_max[i]}${dailyForecast.value?.daily_units?.precipitation_probability_max}`,
     wind: `${daily.wind_speed_10m_max[i]}${dailyForecast.value?.daily_units?.wind_speed_10m_max}`,
   }))
 })
+
+function selectCityHandle(e) {
+  if (e.target.nodeName !== 'LI') return
+
+  const idx = +e.target.dataset.index
+
+  selectedCity.value = citiesData.value[idx]
+  isInputFocused.value = false
+}
 // const forecastToday = computed(() => dailyForecastFormated.value[0])
 // const forecastForWeek = computed(() =>
 //   dailyForecastFormated.value
@@ -213,7 +249,14 @@ onUnmounted(() => {
   <header class="header header--green">
     <h1>Weather</h1>
     <div class="input-wrapper">
-      <input @focus="handleFocus" type="text" name="city-search" v-model="cityName" class="input" />
+      <input
+        @focus="handleFocus"
+        @keypress.enter="getCities"
+        type="text"
+        name="city-search"
+        v-model="cityName"
+        class="input"
+      />
       <button @click="getCities" class="find-btn">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -228,56 +271,70 @@ onUnmounted(() => {
           ></path>
         </svg>
       </button>
-      <ul class="result-list" v-if="isInputFocused && datas.length > 0">
-        <li v-for="(city, index) in citiesData" :key="index" @click="selectCityHandle(city)">
+      <ul
+        class="result-list"
+        v-if="isInputFocused && datas.length > 0"
+        @click="selectCityHandle($event)"
+      >
+        <li v-for="(city, index) in citiesData" :key="index" :data-index="index">
           {{ city?.name }}, {{ city?.state }}, {{ city?.countryCode }}
         </li>
       </ul>
     </div>
   </header>
   <div class="city-results-wrapper">
-    <span>{{ weatherData?.date }}</span>
-    <h2 class="selected-city" v-if="selectedCity.name && weatherData">
-      {{ selectedCity.name }}: {{ weatherData?.current.temperature_2m }}
-      {{ weatherData?.current_units.temperature_2m }}
-    </h2>
-    <ul class="today-dayly">
-      <li v-for="({ time, temp, rain, wind }, index) in dayHourlyFormatted" :key="index">
-        <span>{{ time }}</span>
-        <span>{{ temp }}</span>
-        <span><img src="/icons/rainIcon.svg" alt="" /> {{ rain }}</span>
-        <span><img src="/icons/windIcon.svg" alt="" /> {{ wind }}</span>
-      </li>
-    </ul>
-    <div class="dayly-forecast-wrapper" v-if="dailyForecastFormatted">
-      <h3 class="dayly-forecast-heading" v-if="dailyForecast">Weather this week:</h3>
-      <ul class="dayly-forecast">
-        <li
-          v-for="({ date, tempMin, tempMax, rain, wind }, index) in dailyForecastFormatted"
-          :key="index"
-          class="dayly-forecast-day"
-        >
-          <p>{{ date }}</p>
-          <div>
-            <span>
-              <img src="/icons/minTempIcon.svg" alt="" />
-              {{ tempMin }}
-            </span>
-            <span>
-              <img src="/icons/maxTempIcon.svg" alt="" />
-              {{ tempMax }}
-            </span>
-            <span>
-              <img src="/icons/rainIcon.svg" alt="" />
-              {{ rain }}
-            </span>
-            <span>
-              <img src="/icons/windIcon.svg" alt="" />
-              {{ wind }}
-            </span>
-          </div>
-        </li>
-      </ul>
+    <div class="city-results-wrapper--top-centered">
+      <div class="days-forecast-wrapper">
+        <span class="date">{{ new Date(weatherData?.current.time)?.toLocaleDateString() }}</span>
+        <h2 class="selected-city" v-if="selectedCity.name && weatherData">
+          {{ selectedCity.name }}
+        </h2>
+        <span class="current-temp"
+          >{{ Math.round(weatherData?.current.temperature_2m)
+          }}{{ weatherData?.current_units.temperature_2m }}
+        </span>
+        <span class="weather-code">{{ weatherMap.get(weatherData?.current.weather_code) }}</span>
+        <div class="today-dayly">
+          <ul>
+            <li v-for="({ time, temp, rain, wind }, index) in dayHourlyFormatted" :key="index">
+              <span>{{ time }}</span>
+              <span>{{ temp }}</span>
+              <span><img src="/icons/rainIcon.svg" alt="" /> {{ rain }}</span>
+              <span><img src="/icons/windIcon.svg" alt="" /> {{ wind }}</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="dayly-forecast-wrapper" v-if="dailyForecastFormatted">
+        <h3 class="dayly-forecast-heading" v-if="dailyForecast">Weather this week:</h3>
+        <ul class="dayly-forecast">
+          <li
+            v-for="({ date, tempMin, tempMax, rain, wind }, index) in dailyForecastFormatted"
+            :key="index"
+            class="dayly-forecast-day"
+          >
+            <p>{{ date }}</p>
+            <div class="dayly-forecast-hour">
+              <span>
+                <img src="/icons/minTempIcon.svg" alt="" />
+                {{ tempMin }}
+              </span>
+              <span>
+                <img src="/icons/maxTempIcon.svg" alt="" />
+                {{ tempMax }}
+              </span>
+              <span>
+                <img src="/icons/rainIcon.svg" alt="" />
+                {{ rain }}
+              </span>
+              <span>
+                <img src="/icons/windIcon.svg" alt="" />
+                {{ wind }}
+              </span>
+            </div>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 </template>
@@ -288,6 +345,7 @@ onUnmounted(() => {
   top: 0;
   z-index: 10;
   font-size: 2rem;
+  min-height: 8rem;
 }
 .input-wrapper {
   position: relative;
@@ -296,12 +354,20 @@ onUnmounted(() => {
   margin: 0 auto;
 }
 .input {
+  font-size: 1.7rem;
   background-color: white;
   outline-color: var(--dark-bg-color);
   outline-offset: -2px;
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
   transition: all 0.15s;
+}
+.find-btn {
+  svg {
+    width: 1.8rem;
+    height: 1.8rem;
+    fill: var(--text-color);
+  }
 }
 .result-list {
   list-style: none;
@@ -331,53 +397,94 @@ onUnmounted(() => {
   }
 }
 
-.today-dayly {
-  overflow-y: auto;
-  list-style: none;
+.days-forecast-wrapper {
   display: flex;
-  gap: 3rem;
-  margin: 0 auto;
-  /* justify-content: center; */
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 40%;
+
+  span {
+    width: fit-content;
+  }
+
+  .selected-city {
+    width: fit-content;
+    font-size: 3rem;
+  }
+  .date {
+    font-size: 1.5rem;
+  }
+  .current-temp {
+    font-size: 1.5rem;
+  }
+  .weather-code {
+    font-size: 1.8rem;
+  }
+}
+
+.today-dayly {
+  overflow-x: auto;
+  overflow-y: hidden;
   width: 100%;
-  padding: 2rem;
-  /* background-color: var(--neon-pink-color);
-  color: var(--dark-bg-color); */
-  /* border: 1px solid var(--neon-green-color); */
-  /* border-radius: 1rem; */
+  /* margin: 0 auto; */
+  /* max-width: 100%; */
 
   scrollbar-width: thin;
-  scrollbar-color: var(--neon-green-color) var(--dark-bg-color);
+  scrollbar-color: #9e219eff var(--dark-bg-color);
+  scroll-snap-type: x proximity;
 
-  li {
+  ul {
+    list-style: none;
+    display: flex;
+    gap: 3rem;
+    padding: 2rem;
+    max-width: 100% !important;
+  }
+
+  ul li {
     display: flex;
     flex-direction: column;
     font-size: 1.5rem;
     gap: 1rem;
+    flex: 0 0 auto; /* не растягивается и не сжимается */
+    scroll-snap-align: start;
 
     span {
       display: inline-flex;
+      gap: 0.3rem;
       align-items: center;
       width: max-content;
+
+      &:nth-child(2) {
+        font-weight: 600;
+        font-size: 1.1em;
+      }
     }
   }
 }
 
 .city-results-wrapper {
   display: flex;
-  flex-direction: column;
-  width: 80%;
-  margin: 0 auto;
-  margin-top: 5rem;
-  margin-bottom: 5rem;
-  gap: 1rem;
+  padding: 3rem;
+  min-height: calc(100vh - 8rem - 3rem);
+  align-items: center;
 
-  .selected-city {
-    font-size: 2.5rem;
+  margin: 0 auto;
+
+  .city-results-wrapper--top-centered {
+    display: flex;
+    justify-content: center;
+    gap: 5rem;
+    width: 100%;
   }
 }
 
 .dayly-forecast-wrapper {
-  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 50%;
+  /* margin: 0 auto; */
 
   .dayly-forecast-heading {
     font-size: 2.2rem;
